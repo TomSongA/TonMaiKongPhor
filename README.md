@@ -1,4 +1,3 @@
-```markdown
 # TonMaiKongPhor
 
 > Plant Stress Early Warning System

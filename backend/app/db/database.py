@@ -3,13 +3,16 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker  
 from app.core.config import settings
 
-engine = create_engine(
-    settings.DATABASE_URL,
-    pool_pre_ping=True,
-    pool_recycle=3600,
-    pool_size=5,
-    max_overflow=10,
+url = URL.create(
+    drivername="mysql+pymysql",
+    username=settings.DB_USER,
+    password=settings.DB_PASS,   # SQLAlchemy handles special chars safely
+    host=settings.DB_HOST,
+    port=settings.DB_PORT,
+    database=settings.DB_NAME,
 )
+
+engine = create_engine(url, pool_pre_ping=True, pool_recycle=3600)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

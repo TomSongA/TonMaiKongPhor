@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     PSI_WEIGHT_SOIL: float = 0.40
     PSI_WEIGHT_TEMP: float = 0.35
     PSI_WEIGHT_LIGHT: float = 0.25
+    DB_USER: str = ""
+    DB_PASS: str = ""
+    DB_HOST: str = "iot.cpe.ku.ac.th"
+    DB_PORT: int = 3306
+    DB_NAME: str = ""
 
     
     class Config:

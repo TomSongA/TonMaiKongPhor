@@ -1,11 +1,13 @@
 import json
 import time
+import asyncio
 import paho.mqtt.client as mqtt
 
 from app.core.config import settings
 from app.db.database import SessionLocal, init_db
 from app.models.sensor import SensorReading
 from app.services.psi import calculate_psi
+from app.services.weather_service import get_weather
 
 
 def on_connect(client, userdata, flags, rc):
@@ -24,6 +26,7 @@ def on_disconnect(client, userdata, rc):
 def on_message(client, userdata, msg):
     try:
         payload = json.loads(msg.payload.decode())
+        print(f"Received: {payload}")
 
         result = calculate_psi(
             soil=payload["soil"],
@@ -31,6 +34,9 @@ def on_message(client, userdata, msg):
             humidity=payload["humidity"],
             light=payload["light"],
         )
+
+        # Fetch weather (sync wrapper around async function)
+        weather = asyncio.run(get_weather())
 
         db = SessionLocal()
         try:
@@ -40,11 +46,15 @@ def on_message(client, userdata, msg):
                 humidity=payload["humidity"],
                 light=payload["light"],
                 psi_score=result.psi_score,
-                psi_level=result.psi_level.value,  # .value to get the string
+                psi_level=result.psi_level.value,
+                outdoor_temp=weather.temp if weather else None,
+                outdoor_humidity=weather.humidity if weather else None,
             )
             db.add(reading)
             db.commit()
             print(f"Saved → PSI={result.psi_score} ({result.psi_level.value})")
+            if weather:
+                print(f"Weather → {weather.temp}°C, {weather.humidity}% ({weather.description})")
         except Exception as e:
             db.rollback()
             print(f"DB error: {e}")

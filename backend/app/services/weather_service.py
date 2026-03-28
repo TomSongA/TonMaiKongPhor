@@ -13,6 +13,7 @@ class WeatherData:
     temp: float
     humidity: float
     description: str
+    rain_probability: float | None = None
 
 
 # Open-Meteo
@@ -27,18 +28,21 @@ async def fetch_open_meteo(lat: float, lon: float) -> WeatherData:
         "https://api.open-meteo.com/v1/forecast"
         f"?latitude={lat}&longitude={lon}"
         "&current=temperature_2m,relative_humidity_2m,weather_code"
+        "&hourly=precipitation_probability"
+        "&forecast_hours=1"
         "&timezone=Asia%2FBangkok"
     )
 
     async with httpx.AsyncClient(timeout=10) as client:
         resp = await client.get(url)
         resp.raise_for_status()
-        raw = resp.json()['current']
+        raw = resp.json
 
     data = WeatherData(
         temp = raw['temperature_2m'],
         humidity = raw['relative_humidity_2m'],
-        description = _wmo_description(raw['weather_code']),
+        description = _wmo_description(raw['current']['weather_code']),
+        rain_probability=raw['hourly']['precipitation_probability'][0] / 100,
     )
 
     _cache[cache_key] = {'data': data, 'ts': now}

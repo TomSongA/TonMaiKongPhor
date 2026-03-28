@@ -49,6 +49,7 @@ def on_message(client, userdata, msg):
                 psi_level=result.psi_level.value,
                 outdoor_temp=weather.temp if weather else None,
                 outdoor_humidity=weather.humidity if weather else None,
+                rain_probability=weather.rain_probability if weather else None,
             )
             db.add(reading)
             db.commit()

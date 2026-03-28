@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     APP_NAME: str = "TonMaiKongPhor"
     DEBUG: bool = True
-    DATABASE_URL = "sqlite:///.tonmaikongphor.db"
+    DATABASE_URL: str = ""
     MQTT_BROKER: str = "broker.hivemq.com"
     MQTT_PORT: int = 1883
     MQTT_TOPIC: str = "tonmaikongphor/sensors"

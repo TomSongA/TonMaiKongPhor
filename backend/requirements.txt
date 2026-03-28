@@ -4,6 +4,8 @@ uvicorn>=0.29.0
 
 # Database
 sqlalchemy>=2.0.29
+pymysql>=1.1.0
+cryptography>=42.0.0
 
 # MQTT
 paho-mqtt>=1.6.1,<2.0.0

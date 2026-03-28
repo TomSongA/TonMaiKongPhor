@@ -11,5 +11,8 @@ class SensorReading(Base):
     humidity = Column(Float, nullable=False)
     light = Column(Float, nullable=False)
     psi_score = Column(Float, nullable=False)   # 0-100
-    psi_level = Column(String, nullable=False)  # Healthy / Mild Stress / Critical
+    psi_level = Column(String(20), nullable=False)  # Healthy / Mild Stress / Critical
+    outdoor_temp = Column(Float, nullable=True)
+    outdoor_humidity = Column(Float, nullable=True)
+    rain_probability = Column(Float, nullable=True)
     timestamp = Column (DateTime, server_default=func.now())

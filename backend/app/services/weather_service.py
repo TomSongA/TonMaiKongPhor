@@ -36,11 +36,11 @@ async def fetch_open_meteo(lat: float, lon: float) -> WeatherData:
     async with httpx.AsyncClient(timeout=10) as client:
         resp = await client.get(url)
         resp.raise_for_status()
-        raw = resp.json
+        raw = resp.json()
 
     data = WeatherData(
-        temp = raw['temperature_2m'],
-        humidity = raw['relative_humidity_2m'],
+        temp = raw['current']['temperature_2m'],
+        humidity = raw['current']['relative_humidity_2m'],
         description = _wmo_description(raw['current']['weather_code']),
         rain_probability=raw['hourly']['precipitation_probability'][0] / 100,
     )

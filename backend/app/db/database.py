@@ -2,6 +2,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker  
 from app.core.config import settings
+from sqlalchemy.engine import URL
 
 url = URL.create(
     drivername="mysql+pymysql",

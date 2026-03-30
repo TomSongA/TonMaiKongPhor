@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-class SersorInput(BaseModel):
+class SensorInput(BaseModel):
     soil: float = Field(..., ge=0, le=100)
     temp: float = Field(..., ge=-10, le=60)
     humidity: float = Field(..., ge=0, le=100)

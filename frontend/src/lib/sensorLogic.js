@@ -12,53 +12,53 @@ export function evaluateStress(s) {
   if (s.soil < THRESHOLDS.soil.min) {
     reasons.push({
       key: 'soil_low',
-      label: 'ความชื้นดินต่ำ',
-      detail: `ค่าดิน ${s.soil.toFixed(0)}% ต่ำกว่า ${THRESHOLDS.soil.min}% — เสี่ยงขาดน้ำ`,
+      label: 'Low soil moisture',
+      detail: `Soil cost ${s.soil.toFixed(0)}% Lower ${THRESHOLDS.soil.min}% — Risk of dehydration.`,
     })
   } else if (s.soil > THRESHOLDS.soil.max) {
     reasons.push({
       key: 'soil_high',
-      label: 'ความชื้นดินสูง',
-      detail: `ค่าดิน ${s.soil.toFixed(0)}% สูงกว่า ${THRESHOLDS.soil.max}% — เสี่ยงรากเน่า`,
+      label: 'High soil moisture',
+      detail: `Soil cost ${s.soil.toFixed(0)}% Higher ${THRESHOLDS.soil.max}% — Risk of root rot.`,
     })
   }
   if (s.tempC < THRESHOLDS.tempC.min) {
     reasons.push({
       key: 'temp_low',
-      label: 'อุณหภูมิต่ำ',
-      detail: `${s.tempC.toFixed(1)}°C ต่ำกว่า ${THRESHOLDS.tempC.min}°C`,
+      label: 'low temperature',
+      detail: `${s.tempC.toFixed(1)}°C Lower ${THRESHOLDS.tempC.min}°C`,
     })
   } else if (s.tempC > THRESHOLDS.tempC.max) {
     reasons.push({
       key: 'temp_high',
-      label: 'อุณหภูมิสูง',
-      detail: `${s.tempC.toFixed(1)}°C สูงกว่า ${THRESHOLDS.tempC.max}°C`,
+      label: 'High temperature',
+      detail: `${s.tempC.toFixed(1)}°C Higher ${THRESHOLDS.tempC.max}°C`,
     })
   }
   if (s.humidity < THRESHOLDS.humidity.min) {
     reasons.push({
       key: 'hum_low',
-      label: 'ความชื้นอากาศต่ำ',
-      detail: `RH ${s.humidity.toFixed(0)}% ต่ำกว่า ${THRESHOLDS.humidity.min}%`,
+      label: 'Low humidity',
+      detail: `RH ${s.humidity.toFixed(0)}% Lower ${THRESHOLDS.humidity.min}%`,
     })
   } else if (s.humidity > THRESHOLDS.humidity.max) {
     reasons.push({
       key: 'hum_high',
-      label: 'ความชื้นอากาศสูง',
-      detail: `RH ${s.humidity.toFixed(0)}% สูงกว่า ${THRESHOLDS.humidity.max}%`,
+      label: 'High humidity',
+      detail: `RH ${s.humidity.toFixed(0)}% Higher ${THRESHOLDS.humidity.max}%`,
     })
   }
   if (s.light < THRESHOLDS.light.min) {
     reasons.push({
       key: 'light_low',
-      label: 'แสงไม่พอ',
-      detail: `ความเข้มแสง ${s.light.toFixed(0)}% ต่ำกว่า ${THRESHOLDS.light.min}%`,
+      label: 'Insufficient light',
+      detail: `Light intensity ${s.light.toFixed(0)}% Lower ${THRESHOLDS.light.min}%`,
     })
   } else if (s.light > THRESHOLDS.light.max) {
     reasons.push({
       key: 'light_high',
-      label: 'แสงแรงเกิน',
-      detail: `ความเข้มแสง ${s.light.toFixed(0)}% สูงกว่า ${THRESHOLDS.light.max}%`,
+      label: 'Too bright light',
+      detail: `Light intensity ${s.light.toFixed(0)}% Higher ${THRESHOLDS.light.max}%`,
     })
   }
   return reasons

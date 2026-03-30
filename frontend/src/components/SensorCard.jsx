@@ -11,7 +11,7 @@ import './SensorCard.css'
 function chartData(history, key) {
   return history.map((r, i) => ({
     i,
-    t: new Date(r.at).toLocaleTimeString('th-TH', {
+    t: new Date(r.at).toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
     }),

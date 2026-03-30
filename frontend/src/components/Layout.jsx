@@ -2,10 +2,10 @@ import { NavLink, Outlet } from 'react-router-dom'
 import './Layout.css'
 
 const nav = [
-  { to: '/', label: 'แดชบอร์ด', end: true },
-  { to: '/calendar', label: 'ปฏิทินข้อมูล' },
-  { to: '/data', label: 'ตารางข้อมูล' },
-  { to: '/notifications', label: 'แจ้งเตือน' },
+  { to: '/', label: 'Dashboard', end: true },
+  { to: '/calendar', label: 'Data calendar' },
+  { to: '/data', label: 'Data table' },
+  { to: '/notifications', label: 'Notification' },
 ]
 
 export default function Layout() {
@@ -18,7 +18,7 @@ export default function Layout() {
           </span>
           <div>
             <strong>TonMaiKongPhor</strong>
-            <span className="sidebar-sub">มอนิเตอร์ต้นไม้</span>
+            <span className="sidebar-sub">Tree monitor</span>
           </div>
         </div>
         <nav className="sidebar-nav">
@@ -36,7 +36,7 @@ export default function Layout() {
           ))}
         </nav>
         <p className="sidebar-foot">
-          ข้อมูลตัวอย่าง — เชื่อม API ได้ที่ <code>src/lib</code>
+          Sample data: API connection available at: <code>src/lib</code>
         </p>
       </aside>
       <main className="main-panel">

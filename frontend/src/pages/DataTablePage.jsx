@@ -5,7 +5,7 @@ import './Page.css'
 function padRows(samples) {
   return samples.map((r, idx) => ({
     id: idx + 1,
-    time: new Date(r.at).toLocaleString('th-TH', {
+    time: new Date(r.at).toLocaleString('en-GB', {
       dateStyle: 'short',
       timeStyle: 'medium',
     }),
@@ -31,13 +31,13 @@ export default function DataTablePage() {
   return (
     <div className="page">
       <header className="page-head">
-        <h1>ตารางข้อมูล</h1>
-        <p className="page-desc">เลือกวันที่เพื่อดึงชุดตัวอย่าง (ชุดเดียวกับโหมดปฏิทิน)</p>
+        <h1>Data table</h1>
+        <p className="page-desc">Select a date to retrieve a sample set (the same set as in calendar mode).</p>
       </header>
 
       <div className="table-toolbar">
         <label className="field-inline">
-          วันที่
+          Date
           <input type="date" value={dateStr} onChange={(e) => setDateStr(e.target.value)} />
         </label>
       </div>
@@ -47,11 +47,11 @@ export default function DataTablePage() {
           <thead>
             <tr>
               <th>#</th>
-              <th>เวลา</th>
-              <th>ดิน (%)</th>
-              <th>อุณหภูมิ (°C)</th>
+              <th>time</th>
+              <th>soil (%)</th>
+              <th>tmep (°C)</th>
               <th>RH (%)</th>
-              <th>แสง (%)</th>
+              <th>light (%)</th>
             </tr>
           </thead>
           <tbody>

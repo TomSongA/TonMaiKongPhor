@@ -32,3 +32,7 @@ frontend/.env.local
 # IDE
 .vscode/
 .idea/
+
+*.csv
+*.pkl
+*.joblib

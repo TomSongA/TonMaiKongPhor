@@ -2,67 +2,73 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import List
+import pandas as pd
+import numpy as np
+import joblib
+import os
 
 from app.db.database import get_db
 from app.models.sensor import SensorReading
 from app.schemas.sensor import PredictionResponse
 from app.services.psi import get_psi_level
 
-router = APIRouter(prefix="/api", tags=['Prediction'])
+router = APIRouter(prefix="/api", tags=["Prediction"])
 
 
-def linear_regression(values: List[float]) -> float:
+# Load Model
+ML_DIR      = os.path.join(os.path.dirname(__file__), "../ml")
+MODEL_PATH  = os.path.join(ML_DIR, "model.pkl")
+SCALER_PATH = os.path.join(ML_DIR, "scaler.pkl")
+
+
+def load_model():
+    """Load model and scaler from disk."""
+    if not os.path.exists(MODEL_PATH):
+        raise HTTPException(
+            status_code=503,
+            detail="ML model not trained yet. Run python -m app.ml.train first."
+        )
+    if not os.path.exists(SCALER_PATH):
+        raise HTTPException(
+            status_code=503,
+            detail="Scaler not found. Run python -m app.ml.train first."
+        )
+
+    model  = joblib.load(MODEL_PATH)
+    scaler = joblib.load(SCALER_PATH)
+    return model, scaler
+
+
+# Fallback: Linear Regression
+def linear_regression_predict(scores: List[float], hours_ahead: int) -> float:
     """
-    Simple linear regression to predict next value.
-    Returns the slope (trand direction and speed).
+    Fallback prediction if ML model is not available.
+    Uses simple linear regression on recent PSI scores.
     """
-    n = len(values)
-    x = list(range(n))
-
+    n      = len(scores)
+    x      = list(range(n))
     x_mean = sum(x) / n
-    y_mean = sum(values) / n
+    y_mean = sum(scores) / n
 
-    numerator = sum((x[i] - x_mean) * (values[i] - y_mean) for i in range(n))
+    numerator   = sum((x[i] - x_mean) * (scores[i] - y_mean) for i in range(n))
     denominator = sum((x[i] - x_mean) ** 2 for i in range(n))
 
-    if denominator == 0:
-        return 0.0
-    
-    slope = numerator / denominator
-    return slope
+    slope         = numerator / denominator if denominator != 0 else 0.0
+    steps_ahead   = hours_ahead * 2
+    predicted_psi = scores[-1] + (slope * steps_ahead)
 
-
-def predict_psi(scores: List[float], hours_ahead: int) -> float:
-    """
-    Use slope to project PSI forward by hours_ahead.
-    Clamp result between 0 to 100.
-    """
-    slope = linear_regression(scores)
-
-    # Each reading is ~30 min apart, so 1 hour = 2 readings
-    steps_ahead = hours_ahead * 2
-
-    last_score = scores[-1]
-    predicted_psi = last_score + (slope * steps_ahead)
-
-    # Clamp between 0 to 100
     return round(max(0.0, min(100.0, predicted_psi)), 2)
 
 
+# Confidence
 def get_confidence(scores: List[float]) -> str:
-    """
-    Confidence based on how many readings we have and
-    how consistent the trend is.
-    """
     n = len(scores)
-
     if n < 4:
         return "low"
     elif n < 8:
         return "medium"
-    
-    # Check variance - high variance = less confident
-    mean = sum(scores) / n
+
+    mean     = sum(scores) / n
     variance = sum((s - mean) ** 2 for s in scores) / n
 
     if variance > 400:
@@ -70,9 +76,10 @@ def get_confidence(scores: List[float]) -> str:
     elif variance > 150:
         return "medium"
     else:
-         return "high"
-    
+        return "high"
 
+
+# Predict Endpoint
 @router.get("/predict", response_model=PredictionResponse)
 def get_prediction(hours_ahead: int = 3, db: Session = Depends(get_db)):
     """Answers: What is the predicted stress level in the next 3 hours?"""
@@ -82,27 +89,56 @@ def get_prediction(hours_ahead: int = 3, db: Session = Depends(get_db)):
             status_code=400,
             detail="hours_ahead must be between 1 and 12."
         )
-    
-    # Get last 6 hours of readings to base prediction on
-    since = datetime.utcnow() - timedelta(hours=6)
+
+    # Get last 6 hours of readings
+    since    = datetime.utcnow() - timedelta(hours=6)
     readings = db.query(SensorReading)\
-    .filter(SensorReading.timestamp >= since)\
-    .order_by(SensorReading.timestamp.asc())\
-    .all()
+                 .filter(SensorReading.timestamp >= since)\
+                 .order_by(SensorReading.timestamp.asc())\
+                 .all()
 
     if len(readings) < 2:
         raise HTTPException(
             status_code=404,
             detail="Not enough data to make a prediction. Need at least 2 readings."
         )
-    
-    # Extract PSI scores in order
+
     scores = [r.psi_score for r in readings]
 
-    # Predict
-    predicted_psi = predict_psi(scores, hours_ahead)
+    # Try ML model first
+    try:
+        model, scaler = load_model()
+
+        # Use latest reading as input features
+        latest  = readings[-1]
+        hour    = latest.timestamp.hour
+        target_hour = (hour + hours_ahead) % 24
+
+        # Build feature dataframe
+        X = pd.DataFrame([{
+            "soil":     latest.soil,
+            "temp":     latest.temp,
+            "humidity": latest.humidity,
+            "light":    latest.light,
+            "hour":     target_hour    # predict for future hour
+        }])
+
+        X_scaled      = scaler.transform(X)
+        predicted_psi = float(model.predict(X_scaled)[0])
+        predicted_psi = round(max(0.0, min(100.0, predicted_psi)), 2)
+        method        = "ml"
+
+    except HTTPException:
+        # Fallback to linear regression
+        predicted_psi = linear_regression_predict(scores, hours_ahead)
+        method        = "linear_regression"
+
     predicted_level = get_psi_level(predicted_psi)
-    confidence = get_confidence(scores)
+    confidence      = get_confidence(scores)
+
+    # Lower confidence if using fallback
+    if method == "linear_regression":
+        confidence = "low"
 
     return PredictionResponse(
         predicted_psi=predicted_psi,
@@ -112,34 +148,69 @@ def get_prediction(hours_ahead: int = 3, db: Session = Depends(get_db)):
     )
 
 
+# Trend Endpoint
 @router.get("/predict/trend")
 def get_trend(db: Session = Depends(get_db)):
     """Returns current trend direction for the dashboard arrow indicator."""
 
-    since = datetime.utcnow() - timedelta(hours=6)
+    since    = datetime.utcnow() - timedelta(hours=6)
     readings = db.query(SensorReading)\
                  .filter(SensorReading.timestamp >= since)\
                  .order_by(SensorReading.timestamp.asc())\
                  .all()
 
     if len(readings) < 2:
-        return {"trend": "unknown", "icon": "→", "slope": 0.0}
+        return {"trend": "unknown", "icon": "➡️", "slope": 0.0}
 
     scores = [r.psi_score for r in readings]
-    slope  = linear_regression(scores)
+    n      = len(scores)
+    x      = list(range(n))
+    x_mean = sum(x) / n
+    y_mean = sum(scores) / n
+
+    numerator   = sum((x[i] - x_mean) * (scores[i] - y_mean) for i in range(n))
+    denominator = sum((x[i] - x_mean) ** 2 for i in range(n))
+    slope       = numerator / denominator if denominator != 0 else 0.0
 
     if slope > 2:
         trend = "rising"
-        icon  = "↑"
+        icon  = "⬆️"
     elif slope < -2:
         trend = "falling"
-        icon  = "↓"
+        icon  = "⬇️"
     else:
         trend = "stable"
-        icon  = "→"
+        icon  = "➡️"
 
     return {
         "trend": trend,
         "icon":  icon,
         "slope": round(slope, 3)
+    }
+
+
+# Model Info Endpoint
+@router.get("/predict/model-info")
+def get_model_info():
+    """Returns info about the current ML model status."""
+
+    model_exists  = os.path.exists(MODEL_PATH)
+    scaler_exists = os.path.exists(SCALER_PATH)
+
+    if not model_exists or not scaler_exists:
+        return {
+            "status":  "not_trained",
+            "message": "Run python -m app.ml.train to train the model",
+            "method":  "linear_regression_fallback"
+        }
+
+    model_size = os.path.getsize(MODEL_PATH) / 1024
+
+    return {
+        "status":       "ready",
+        "message":      "ML model is loaded and ready",
+        "method":       "random_forest",
+        "model_size_kb": round(model_size, 2),
+        "features":     ["soil", "temp", "humidity", "light", "hour"],
+        "model_path":   MODEL_PATH
     }

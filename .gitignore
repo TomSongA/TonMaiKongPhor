@@ -34,3 +34,5 @@ frontend/.env.local
 .idea/
 
 *.csv
+*.pkl
+*.joblib

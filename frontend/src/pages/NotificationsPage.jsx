@@ -17,7 +17,7 @@ export default function NotificationsPage() {
         out.push({
           id: `day-${i}`,
           at: day.date,
-          title: 'ต้นไม้มีสัญญาณเครียดในวันนี้ (สรุปเฉลี่ย)',
+          title: 'The trees are showing signs of stress today (average summary).',
           reasons,
         })
       }
@@ -28,14 +28,14 @@ export default function NotificationsPage() {
       out.unshift({
         id: 'spot-1',
         at: spot.at - 3600000,
-        title: 'การวัดย้อนหลัง 1 ชม. (ตัวอย่าง)',
+        title: 'Measurement taken 1 hour prior (example).',
         reasons: spotReasons,
       })
     }
     return out
   }, [])
 
-  const liveStr = new Date(lastUpdated).toLocaleString('th-TH', {
+  const liveStr = new Date(lastUpdated).toLocaleString('en-GB', {
     dateStyle: 'medium',
     timeStyle: 'medium',
   })
@@ -43,22 +43,22 @@ export default function NotificationsPage() {
   return (
     <div className="page">
       <header className="page-head">
-        <h1>แจ้งเตือน</h1>
+        <h1>Notification</h1>
         <p className="page-desc">
-          แจ้งเมื่อค่าอยู่นอกช่วงที่กำหนด — บอกได้ว่าปัจจัยไหนที่ทำให้ &quot;เครียด&quot;
+        Notify when the value is outside the specified range. Indicating which factor is causing it. &quot;stressed&quot;
         </p>
       </header>
 
       <section className="card-block alert-hero">
-        <h2 className="section-title">สถานะล่าสุด</h2>
+        <h2 className="section-title">Latest status</h2>
         <p className="page-meta">
-          อ้างอิงเวลา: <time dateTime={new Date(lastUpdated).toISOString()}>{liveStr}</time>
+          Time reference: <time dateTime={new Date(lastUpdated).toISOString()}>{liveStr}</time>
         </p>
         {stressReasons.length === 0 ? (
-          <p className="alert-ok">ตอนนี้ค่าอยู่ในช่วงที่เหมาะสม — ไม่พบสัญญาณเครียดจากเกณฑ์ชุดนี้</p>
+          <p className="alert-ok">The current values ​​are within the appropriate range: no signs of stress were found within this set of criteria.</p>
         ) : (
           <div className="alert-list">
-            <p className="alert-bad-title">ต้นไม้มีความเครียดจากค่าต่อไปนี้:</p>
+            <p className="alert-bad-title">Trees experience stress from the following values:</p>
             <ul>
               {stressReasons.map((r) => (
                 <li key={r.key}>
@@ -68,22 +68,22 @@ export default function NotificationsPage() {
               ))}
             </ul>
             <p className="page-foot">
-              ค่าปัจจุบัน: ดิน {reading.soil.toFixed(0)}% · {reading.tempC.toFixed(1)}°C · RH{' '}
-              {reading.humidity.toFixed(0)}% · แสง {reading.light.toFixed(0)}%
+              Current value: Soil {reading.soil.toFixed(0)}% · {reading.tempC.toFixed(1)}°C · RH{' '}
+              {reading.humidity.toFixed(0)}% · light {reading.light.toFixed(0)}%
             </p>
           </div>
         )}
       </section>
 
       <section>
-        <h2 className="section-title">ประวัติแจ้งเตือน (ตัวอย่าง)</h2>
+        <h2 className="section-title">Notification history (example)</h2>
         <ul className="notif-history">
           {historyAlerts.map((item) => (
             <li key={item.id} className="notif-card">
               <div className="notif-card__head">
                 <strong>{item.title}</strong>
                 <time dateTime={new Date(item.at).toISOString()}>
-                  {new Date(item.at).toLocaleString('th-TH', {
+                  {new Date(item.at).toLocaleString('en-GB', {
                     dateStyle: 'medium',
                     timeStyle: 'short',
                   })}
@@ -100,7 +100,7 @@ export default function NotificationsPage() {
           ))}
         </ul>
         {historyAlerts.length === 0 && (
-          <p className="page-foot">ยังไม่มีรายการในช่วงตัวอย่าง</p>
+          <p className="page-foot">There are no items listed in the preview.</p>
         )}
       </section>
     </div>

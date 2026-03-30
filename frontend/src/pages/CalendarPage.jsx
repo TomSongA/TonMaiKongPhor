@@ -49,7 +49,7 @@ export default function CalendarPage() {
   const activeDayNum = pickedDayNum ?? defaultDayNum
   const selected = days[activeDayNum - 1] ?? days[0]
 
-  const monthLabel = new Date(year, month, 1).toLocaleDateString('th-TH', {
+  const monthLabel = new Date(year, month, 1).toLocaleDateString('en-GB', {
     month: 'long',
     year: 'numeric',
   })
@@ -68,14 +68,14 @@ export default function CalendarPage() {
   }, [selected, startHour, endHour])
 
   const chartRows = chartSamples.map((r) => ({
-    time: new Date(r.at).toLocaleTimeString('th-TH', {
+    time: new Date(r.at).toLocaleTimeString('en-GB', {
       hour: '2-digit',
       minute: '2-digit',
     }),
-    ดิน: Math.round(r.soil),
-    อุณหภูมิ: Number(r.tempC.toFixed(1)),
+    soil: Math.round(r.soil),
+    temp: Number(r.tempC.toFixed(1)),
     RH: Math.round(r.humidity),
-    แสง: Math.round(r.light),
+    light: Math.round(r.light),
   }))
 
   function pickDay(dayNumber) {
@@ -95,24 +95,24 @@ export default function CalendarPage() {
   return (
     <div className="page">
       <header className="page-head">
-        <h1>ปฏิทินข้อมูล</h1>
+        <h1>Data calendar</h1>
         <p className="page-desc">
-          เลือกวันเพื่อดูสรุป — ถ้าเป็นวันนี้สามารถกำหนดช่วงเวลาในวันเพื่อดูกราฟได้
+          Select a date to view a summary. If it's today, you can specify a time period within the day to view the graph.
         </p>
       </header>
 
       <div className="cal-toolbar">
         <button type="button" className="btn-ghost" onClick={prevMonth}>
-          ‹ เดือนก่อน
+          ‹ previous month
         </button>
         <strong className="cal-month">{monthLabel}</strong>
         <button type="button" className="btn-ghost" onClick={nextMonth}>
-          เดือนถัด ›
+          Next month ›
         </button>
       </div>
 
       <div className="cal-grid">
-        {['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'].map((d) => (
+        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((d) => (
           <div key={d} className="cal-dow">
             {d}
           </div>
@@ -145,7 +145,7 @@ export default function CalendarPage() {
       {selected && (
         <section className="cal-detail card-block">
           <h2 className="section-title">
-            {new Date(selected.date).toLocaleDateString('th-TH', {
+            {new Date(selected.date).toLocaleDateString('en-GB', {
               weekday: 'long',
               day: 'numeric',
               month: 'long',
@@ -153,18 +153,18 @@ export default function CalendarPage() {
             })}
           </h2>
           <p className="detail-summary">
-            PSI เฉลี่ยวันนี้: <strong>{Math.round(selected.psi)}</strong>
+            PSI average today: <strong>{Math.round(selected.psi)}</strong>
             {selected.stressed ? (
-              <span className="badge badge--warn">มีช่วงเครียด</span>
+              <span className="badge badge--warn">There were stressful times.</span>
             ) : (
-              <span className="badge badge--ok">โดยรวมปกติ</span>
+              <span className="badge badge--ok">Overall normal.</span>
             )}
           </p>
 
           {isToday(selected.date) && (
             <div className="time-range">
               <label>
-                เริ่ม (ชั่วโมง)
+                Start (hours)
                 <input
                   type="number"
                   min={0}
@@ -174,7 +174,7 @@ export default function CalendarPage() {
                 />
               </label>
               <label>
-                ถึง (ชั่วโมง)
+                Until (hours)
                 <input
                   type="number"
                   min={1}
@@ -200,10 +200,10 @@ export default function CalendarPage() {
                   }}
                 />
                 <Legend />
-                <Line type="monotone" dataKey="ดิน" stroke="var(--chart-soil)" dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="อุณหภูมิ" stroke="var(--chart-temp)" dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="soil" stroke="var(--chart-soil)" dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="temp" stroke="var(--chart-temp)" dot={false} strokeWidth={2} />
                 <Line type="monotone" dataKey="RH" stroke="var(--chart-hum)" dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="แสง" stroke="var(--chart-light)" dot={false} strokeWidth={2} />
+                <Line type="monotone" dataKey="light" stroke="var(--chart-light)" dot={false} strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </div>

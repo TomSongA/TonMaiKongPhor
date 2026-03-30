@@ -6,7 +6,7 @@ import './Page.css'
 export default function DashboardPage() {
   const { reading, history, lastUpdated, psi } = useLiveSensors()
 
-  const lastStr = new Date(lastUpdated).toLocaleString('th-TH', {
+  const lastStr = new Date(lastUpdated).toLocaleString('en-GB', {
     dateStyle: 'medium',
     timeStyle: 'medium',
   })
@@ -14,10 +14,10 @@ export default function DashboardPage() {
   return (
     <div className="page">
       <header className="page-head">
-        <h1>แดชบอร์ด</h1>
+        <h1>Dashboard</h1>
         <p className="page-meta">
           <span className="live-dot" aria-hidden />
-          อัปเดตล่าสุด: <time dateTime={new Date(lastUpdated).toISOString()}>{lastStr}</time>
+          Latest update: <time dateTime={new Date(lastUpdated).toISOString()}>{lastStr}</time>
         </p>
       </header>
 
@@ -25,11 +25,11 @@ export default function DashboardPage() {
 
       <section aria-labelledby="sensors-heading">
         <h2 id="sensors-heading" className="section-title">
-          เซ็นเซอร์แบบเรียลไทม์
+          Real-time sensor
         </h2>
         <div className="sensor-grid">
           <SensorCard
-            title="ความชื้นดิน"
+            title="Soil moisture"
             unit="%"
             history={history}
             dataKey="soil"
@@ -37,7 +37,7 @@ export default function DashboardPage() {
             formatValue={(v) => v.toFixed(0)}
           />
           <SensorCard
-            title="อุณหภูมิ"
+            title="temperature"
             unit="°C"
             history={history}
             dataKey="tempC"
@@ -45,7 +45,7 @@ export default function DashboardPage() {
             formatValue={(v) => v.toFixed(1)}
           />
           <SensorCard
-            title="ความชื้นอากาศ"
+            title="Air humidity"
             unit="% RH"
             history={history}
             dataKey="humidity"
@@ -53,7 +53,7 @@ export default function DashboardPage() {
             formatValue={(v) => v.toFixed(0)}
           />
           <SensorCard
-            title="ความเข้มแสง"
+            title="Light intensity"
             unit="%"
             history={history}
             dataKey="light"
@@ -64,8 +64,8 @@ export default function DashboardPage() {
       </section>
 
       <p className="page-foot">
-        ค่าปัจจุบัน (ดิบ): ดิน {reading.soil.toFixed(0)}% · {reading.tempC.toFixed(1)}°C · RH{' '}
-        {reading.humidity.toFixed(0)}% · แสง {reading.light.toFixed(0)}%
+        Current (raw) value: Soil {reading.soil.toFixed(0)}% · {reading.tempC.toFixed(1)}°C · RH{' '}
+        {reading.humidity.toFixed(0)}% · light {reading.light.toFixed(0)}%
       </p>
     </div>
   )

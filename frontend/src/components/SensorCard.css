@@ -1,0 +1,39 @@
+.sensor-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+}
+
+.sensor-card__head h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sensor-card__value {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-h);
+  font-variant-numeric: tabular-nums;
+}
+
+.sensor-card__unit {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.sensor-card__chart {
+  flex: 1;
+  margin-top: 8px;
+  min-height: 120px;
+}

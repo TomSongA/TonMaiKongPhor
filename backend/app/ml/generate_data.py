@@ -65,11 +65,11 @@ def generate_training_data() -> pd.DataFrame:
             "humidity":    round(humidity, 2),
             "light":       round(light, 2),
             "hour":        hour,
-            "psi_score":   result["psi_score"],
-            "psi_level":   result["psi_level"],
-            "soil_score":  result["breakdown"]["soil_score"],
-            "temp_score":  result["breakdown"]["temp_score"],
-            "light_score": result["breakdown"]["light_score"],
+            "psi_score":   result.psi_score,
+            "psi_level":   result.psi_level,
+            "soil_score":  result.breakdown["soil_score"],
+            "temp_score":  result.breakdown["temp_score"],
+            "light_score": result.breakdown["light_score"],
         })
 
     df = pd.DataFrame(records)

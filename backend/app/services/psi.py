@@ -1,5 +1,5 @@
 from app.core.config import settings
-
+from dataclasses import dataclass
 
 # Per-Factor Scoring
 
@@ -54,14 +54,28 @@ def score_light(light: float) -> float:
         return 75.0  
 
 
+# Level Classification
+
+def get_psi_level(psi_score: float) -> str:
+    if psi_score <= 40:
+        return "Healthy"
+    elif psi_score <= 70:
+        return "Mild Stress"
+    else:
+        return "Critical"
+
+
 # PSI Calculation
 
-def calculate_psi(
-    soil: float,
-    temp: float,
-    humidity: float,
-    light: float
-) -> dict:
+@dataclass
+class PSIResult:
+    psi_score: float
+    psi_level: str
+    explanation: str
+    advice: str
+    breakdown: dict
+
+def calculate_psi(soil, temp, humidity, light) -> PSIResult:
     soil_score  = score_soil(soil)
     temp_score  = score_temp(temp)
     light_score = score_light(light)
@@ -73,32 +87,17 @@ def calculate_psi(
         2
     )
 
-    psi_level = get_psi_level(psi_score)
-    explanation = build_explanation(soil, temp, humidity, light, soil_score, temp_score, light_score)
-    advice = build_advice(soil_score, temp_score, light_score, psi_level)
-
-    return {
-        "psi_score":   psi_score,
-        "psi_level":   psi_level,
-        "explanation": explanation,
-        "advice":      advice,
-        "breakdown": {
+    return PSIResult(
+        psi_score   = psi_score,
+        psi_level   = get_psi_level(psi_score),
+        explanation = build_explanation(soil, temp, humidity, light, soil_score, temp_score, light_score),
+        advice      = build_advice(soil_score, temp_score, light_score, get_psi_level(psi_score)),
+        breakdown   = {
             "soil_score":  soil_score,
             "temp_score":  temp_score,
             "light_score": light_score,
         }
-    }
-
-
-# Level Classification
-
-def get_psi_level(psi_score: float) -> str:
-    if psi_score <= 40:
-        return "Healthy"
-    elif psi_score <= 70:
-        return "Mild Stress"
-    else:
-        return "Critical"
+    )
 
 
 # Human-readable Explanation

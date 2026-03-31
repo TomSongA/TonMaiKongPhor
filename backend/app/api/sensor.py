@@ -23,11 +23,11 @@ def create_sensor_reading(payload: SensorInput, db: Session = Depends(get_db)):
         temp=payload.temp,
         humidity=payload.humidity,
         light=payload.light,
-        psi_score=result['psi_score'],
-        psi_level=result['psi_level'],
+        psi_score=result.psi_score,
+        psi_level=result.psi_level,
     )
     db.add(reading)
-    db.commit
+    db.commit()
     db.refresh(reading)
 
     return SensorResponse(
@@ -38,8 +38,8 @@ def create_sensor_reading(payload: SensorInput, db: Session = Depends(get_db)):
         light=reading.light,
         psi_score=reading.psi_score,
         psi_level=reading.psi_level,
-        explanation=result['explanation'],
-        breakdown=result['breakdown'],
+        explanation=result.explanation,
+        breakdown=result.breakdown,
         timestamp=reading.timestamp
     )
 
@@ -69,8 +69,8 @@ def get_latest_reading(db: Session = Depends(get_db)):
         light=reading.light,
         psi_score=reading.psi_score,
         psi_level=reading.psi_level,
-        explanation=result['explanation'],
-        breakdown=result['breakdown'],
+        explanation=result.explanation,
+        breakdown=result.breakdown,
         timestamp=reading.timestamp
     )
 
@@ -94,9 +94,9 @@ def get_stress_status(db: Session = Depends(get_db)):
     )
 
     return StressStatusResponse(
-        psi_score=result['psi_score'],
-        psi_level=result['psi_level'],
-        explanation=result['explanation'],
-        breakdown=result['breakdown'],
-        advice=result['advice']
+        psi_score=result.psi_score,
+        psi_level=result.psi_level,
+        explanation=result.explanation,
+        breakdown=result.breakdown,
+        advice=result.advice
     )

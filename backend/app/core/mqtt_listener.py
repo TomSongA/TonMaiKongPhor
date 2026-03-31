@@ -46,14 +46,14 @@ def on_message(client, userdata, msg):
                 humidity=payload["humidity"],
                 light=payload["light"],
                 psi_score=result.psi_score,
-                psi_level=result.psi_level.value,
+                psi_level=result.psi_level,
                 outdoor_temp=weather.temp if weather else None,
                 outdoor_humidity=weather.humidity if weather else None,
                 rain_probability=weather.rain_probability if weather else None,
             )
             db.add(reading)
             db.commit()
-            print(f"Saved → PSI={result.psi_score} ({result.psi_level.value})")
+            print(f"Saved → PSI={result.psi_score} ({result.psi_level})")
             if weather:
                 print(f"Weather → {weather.temp}°C, {weather.humidity}% ({weather.description})")
         except Exception as e:

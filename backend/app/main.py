@@ -8,6 +8,9 @@ from app.api.history import router as history_router
 from app.api.predict import router as predict_router
 from app.api.weather import router as weather_router
 
+import threading
+from app.core.mqtt_listener import start_mqtt_listener
+
 app = FastAPI(
     title="TonMaiKongPhor API",
     description="Plant Stress Early Warning System",
@@ -31,6 +34,12 @@ app.add_middleware(
 def on_startup():
     init_db()
     print("✅ Database initialized")
+    
+    # Start MQTT in background thread
+    thread = threading.Thread(target=start_mqtt_listener, daemon=True)
+    thread.start()
+    print("✅ MQTT listener started")
+    
     print("✅ TonMaiKongPhor API is ready")
 
 # Routers

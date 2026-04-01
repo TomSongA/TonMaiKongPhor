@@ -1,0 +1,75 @@
+.sidebar {
+  width: 100%;
+  flex-shrink: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 15px 24px;
+  gap: 0;
+  border-bottom: 25px solid var(--bg);
+  border-right: none;
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  font-size: 50px;
+  line-height: 1;
+}
+
+.sidebar-brand strong {
+  display: block;
+  color: var(--text-h);
+  font-size: 35px;
+  letter-spacing: -0.02em;
+}
+
+.sidebar-sub {
+  display: none; /* ซ่อน "Tree monitor" ให้ดูสะอาด */
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  background: var(--sidebar-hover);  /* พื้นหลัง pill กลุ่ม */
+  border-radius: 999px;
+  padding: 20px 20px;
+  margin: 0 auto; /* ดัน nav ให้อยู่กึ่งกลาง */
+}
+
+.sidebar-link {
+  display: block;
+  padding: 15px 25px;
+  border-radius: 999px;  /* แต่ละ tab โค้งมน */
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 25px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sidebar-link:hover {
+  background: var(--card-bg);
+  color: var(--text-h);
+}
+
+.sidebar-link--active {
+  background: var(--card-bg);
+  color: var(--text-h);
+  font-weight: 500;
+}
+
+.sidebar-foot {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+.sidebar-foot code {
+  font-size: 15px;
+}

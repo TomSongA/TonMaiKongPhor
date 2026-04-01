@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Environment
+.env
+*.env
+
+# Database
+*.db
+*.sqlite3
+
+# ML Models
+*.pkl
+*.joblib
+
+# Testing
+.pytest_cache/
+.coverage
+
+# Node / React
+node_modules/
+dist/
+.DS_Store
+
+# Vite
+frontend/.env.local
+
+# IDE
+.vscode/
+.idea/
+
+*.csv
+*.pkl
+*.joblib

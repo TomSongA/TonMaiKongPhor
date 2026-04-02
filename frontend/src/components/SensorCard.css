@@ -1,97 +1,39 @@
-.sensor-summary {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 12px;
-}
-
-.sensor-item {
-  padding: 10px;
-  border-radius: 8px;
+.sensor-card {
   background: var(--card-bg);
-  font-size: 14px;
-}
-
-.sensor-item strong {
-  display: block;
-  font-size: 16px;
-  color: var(--text-h);
-}
-
-.sensor-item.is-alert {
-  border: 2px solid red;
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-.stress-box {
-  background: #ffecec;
-  border: 1px solid red;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 12px;
-}
-
-.stress-gauge {
-  text-align: center;
-  position: relative;
-
-  margin: 25px;
-  background: var(--card-bg);        /* พื้นหลัง */
-  border: 1px solid var(--border);  /* กรอบ */
-  border-radius: 12px;              /* มุมโค้ง */
-  padding: 30px 15px;
-}
-
-.circle-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 14px;
-  margin-bottom: 16px;
-}
-
-.circle-gauge {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  text-align: center;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-
-  margin: 25px;
-  background: var(--card-bg);        /* พื้นหลัง */
-  border: 1px solid var(--border);  /* กรอบ */
-  border-radius: 12px;              /* มุมโค้ง */
-  padding: 30px 40px;
-  height: 300px;
+  min-height: 200px;
 }
 
-.circle-gauge svg {
-  display: block;
-  margin: 0 auto;
-}
-
-.circle-gauge.is-alert {
-  border: 2px solid red;
-  background: #ffecec;
-  animation: pulse 1s infinite;
-}
-
-.circle-center {
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 20px;
-}
-
-.circle-gauge p {
-  margin-top: 6px;
-  font-size: 20px;
+.sensor-card__head h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sensor-card__value {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-h);
+  font-variant-numeric: tabular-nums;
+}
+
+.sensor-card__unit {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.sensor-card__chart {
+  flex: 1;
+  margin-top: 8px;
+  min-height: 120px;
 }

@@ -39,8 +39,9 @@
   --chart-hum: #457b9d;
   --chart-light: #f4a261;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-poppins: 'Poppins', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --sans: var(--font-poppins);
+  --heading: var(--font-poppins);
   --mono: ui-monospace, Consolas, monospace;
 
   font: 16px/145% var(--sans);
@@ -125,7 +126,7 @@ p {
 }
 
 code {
-  font-family: var(--mono);
+  font-family: var(--font-poppins);
   display: inline-flex;
   border-radius: 4px;
   color: var(--text-h);
@@ -137,4 +138,8 @@ code {
 
 * {
   box-sizing: border-box;
+}
+
+* {
+  font-family: var(--font-poppins), 'Poppins', sans-serif;
 }

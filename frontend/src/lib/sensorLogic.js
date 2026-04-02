@@ -100,11 +100,17 @@ function startOfDay(d) {
   return x.getTime()
 }
 
+function seededRandom(seed) {
+  const x = Math.sin(seed) * 10000
+  return x - Math.floor(x)
+}
+
 export function generateDaySummary(dayTs) {
   const dayStart = startOfDay(dayTs)
   const samples = []
   for (let h = 0; h < 24; h += 2) {
     const t = dayStart + h * 3600000
+    const seed = dayStart + h  // seed จาก date+hour = ค่าเดิมทุกครั้ง
     samples.push(
       randomReading({
         soil: 48 + Math.sin(h / 4) * 8,
@@ -112,8 +118,8 @@ export function generateDaySummary(dayTs) {
         humidity: 55 + Math.sin(h / 3) * 10,
         light:
           h >= 6 && h <= 18
-            ? 40 + Math.random() * 45
-            : 5 + Math.random() * 15,
+            ? 40 + seededRandom(seed) * 45
+            : 5 + seededRandom(seed + 1) * 15,
         at: t,
       }),
     )

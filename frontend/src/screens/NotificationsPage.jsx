@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { evaluateStress, generateDaySummary, randomReading } from '../lib/sensorLogic'
+import { useEffect, useState } from 'react'
+import { fetchStressHistory } from '../lib/sensorApi'
 import { useLiveSensors } from '../hooks/useLiveSensors'
 import './Page.css'
 
@@ -9,52 +9,63 @@ export default function NotificationsPage() {
   const sensors = useLiveSensors()
   const [historyAlerts, setHistoryAlerts] = useState([])
 
-  // ย้ายมาไว้ใน useEffect — รันฝั่ง client อย่างเดียว
   useEffect(() => {
-    const out = []
-    for (let i = 0; i < 5; i++) {
-      const d = new Date()
-      d.setDate(d.getDate() - i)
-      const day = generateDaySummary(d.getTime())
-      const reasons = evaluateStress(day.summary)
-      if (reasons.length) {
-        out.push({
-          id: `day-${i}`,
-          at: day.date,
-          title: 'The trees are showing signs of stress today (average summary).',
-          reasons,
-        })
+    let cancelled = false
+    async function load() {
+      try {
+        const hist = await fetchStressHistory()
+        if (cancelled) return
+        const items = hist
+          .filter((h) => h.psi_level !== 'Healthy')
+          .map((h) => ({
+            id: h.date,
+            at: new Date(`${h.date}T12:00:00`).getTime(),
+            title: `Daily summary: ${h.psi_level}`,
+            reasons: [
+              {
+                key: 'avg',
+                label: h.psi_level,
+                detail: `Average stress index: ${h.avg_psi} (backend scale: lower is healthier)`,
+              },
+            ],
+          }))
+        setHistoryAlerts(items)
+      } catch {
+        if (!cancelled) setHistoryAlerts([])
       }
     }
-    const spot = randomReading()
-    const spotReasons = evaluateStress(spot)
-    if (spotReasons.length) {
-      out.unshift({
-        id: 'spot-1',
-        at: spot.at - 3600000,
-        title: 'Measurement taken 1 hour prior (example).',
-        reasons: spotReasons,
-      })
+    load()
+    return () => {
+      cancelled = true
     }
-    setHistoryAlerts(out)
   }, [])
 
-  // guard หลัง hooks ทั้งหมด
   if (!sensors) return null
 
-  const { reading, stressReasons, lastUpdated } = sensors
+  const { reading, stressReasons, lastUpdated, error } = sensors
   const liveStr = new Date(lastUpdated).toLocaleString('en-GB', {
     dateStyle: 'medium',
     timeStyle: 'medium',
   })
 
+  if (error && !reading) {
+    return (
+      <div className="page">
+        <header className="page-head">
+          <h1>Notification</h1>
+        </header>
+        <p className="alert-bad-title">{error}</p>
+        <p className="page-foot">Ensure FastAPI is running and has at least one row in the database.</p>
+      </div>
+    )
+  }
+
   return (
-    // ... JSX เดิมทุกอย่าง ไม่ต้องแก้
     <div className="page">
       <header className="page-head">
         <h1>Notification</h1>
         <p className="page-desc">
-          Notify when the value is outside the specified range. Indicating which factor is causing it. &quot;stressed&quot;
+          Latest status from <code>/api/sensor/latest</code>. History from <code>/api/stress-history</code> (last 7 days).
         </p>
       </header>
 
@@ -64,10 +75,12 @@ export default function NotificationsPage() {
           Time reference: <time dateTime={new Date(lastUpdated).toISOString()}>{liveStr}</time>
         </p>
         {stressReasons.length === 0 ? (
-          <p className="alert-ok">The current values are within the appropriate range: no signs of stress were found within this set of criteria.</p>
+          <p className="alert-ok">
+            Latest reading is in the Healthy range (backend PSI classification).
+          </p>
         ) : (
           <div className="alert-list">
-            <p className="alert-bad-title">Trees experience stress from the following values:</p>
+            <p className="alert-bad-title">Attention:</p>
             <ul>
               {stressReasons.map((r) => (
                 <li key={r.key}>
@@ -77,15 +90,15 @@ export default function NotificationsPage() {
               ))}
             </ul>
             <p className="page-foot">
-              Current value: Soil {reading.soil.toFixed(0)}% · {reading.tempC.toFixed(1)}°C · RH{' '}
-              {reading.humidity.toFixed(0)}% · light {reading.light.toFixed(0)}%
+              Current: Soil {reading.soil.toFixed(0)}% · {reading.tempC.toFixed(1)}°C · RH {reading.humidity.toFixed(0)}% · light{' '}
+              {reading.lightLux != null ? `${Math.round(reading.lightLux)} lux` : `${reading.light.toFixed(0)} scaled`}
             </p>
           </div>
         )}
       </section>
 
       <section>
-        <h2 className="section-title">Notification history (example)</h2>
+        <h2 className="section-title">Recent daily alerts (7-day history)</h2>
         <ul className="notif-history">
           {historyAlerts.map((item) => (
             <li key={item.id} className="notif-card">
@@ -109,7 +122,7 @@ export default function NotificationsPage() {
           ))}
         </ul>
         {historyAlerts.length === 0 && (
-          <p className="page-foot">There are no items listed in the preview.</p>
+          <p className="page-foot">No non-healthy days in the last week, or no history yet.</p>
         )}
       </section>
     </div>

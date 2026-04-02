@@ -10,6 +10,7 @@ const nav = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/calendar', label: 'Data calendar' },
   { to: '/data', label: 'Data table' },
+  { to: '/notifications', label: 'Notifications' },
 ]
 
 const poppins = Poppins({ 
@@ -47,7 +48,7 @@ export default function Layout({ children }) {
             ))}
           </nav>
           <p className="sidebar-foot">
-            Sample data: API connection available at: <code>src/lib</code>
+            API base: <code>NEXT_PUBLIC_API_URL</code> (see <code>.env.example</code>)
           </p>
         </aside>
         <main className="main-panel">{children}</main>

@@ -1,15 +1,43 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 from datetime import datetime, timedelta
-from typing import List
+from typing import List, Optional
 
 from app.db.database import get_db
 from app.models.sensor import SensorReading
-from app.schemas.sensor import HistoryPoint
+from app.schemas.sensor import HistoryPoint, ReadingRow
 from app.services.psi import get_psi_level
 
 router = APIRouter(prefix="/api", tags=["History"])
+
+
+@router.get("/readings", response_model=List[ReadingRow])
+def get_readings(
+    from_date: Optional[str] = Query(None, description="Start date YYYY-MM-DD (inclusive)"),
+    to_date: Optional[str] = Query(None, description="End date YYYY-MM-DD (inclusive)"),
+    limit: int = Query(5000, ge=1, le=20000),
+    db: Session = Depends(get_db),
+):
+    """Raw readings in a date range (for calendar / data table / client-side charts)."""
+
+    q = db.query(SensorReading).order_by(SensorReading.timestamp.asc())
+
+    if from_date:
+        try:
+            start = datetime.strptime(from_date[:10], "%Y-%m-%d")
+        except ValueError:
+            raise HTTPException(status_code=400, detail="from_date must be YYYY-MM-DD")
+        q = q.filter(SensorReading.timestamp >= start)
+
+    if to_date:
+        try:
+            end_day = datetime.strptime(to_date[:10], "%Y-%m-%d") + timedelta(days=1)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="to_date must be YYYY-MM-DD")
+        q = q.filter(SensorReading.timestamp < end_day)
+
+    rows = q.limit(limit).all()
+    return rows
 
 
 @router.get("/stress-history", response_model=List[HistoryPoint])

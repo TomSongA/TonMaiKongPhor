@@ -1,7 +1,7 @@
 'use client'
 
 export default function CircleGauge({ label, value, max, color }) {
-  const radius = 80
+  const radius = 150
   const stroke = 20
   const normalized = Math.min(value / max, 1)
 
@@ -10,11 +10,11 @@ export default function CircleGauge({ label, value, max, color }) {
 
   return (
     <div className="circle-gauge">
-      <svg width="200" height="200">
+      <svg width="400" height="400">
         {/* พื้นหลัง */}
         <circle
-          cx="100"
-          cy="100"
+          cx="200"
+          cy="200"
           r={radius}
           stroke="var(--border)"
           strokeWidth={stroke}
@@ -23,8 +23,8 @@ export default function CircleGauge({ label, value, max, color }) {
 
         {/* progress */}
         <circle
-          cx="100"
-          cy="100"
+          cx="200"
+          cy="200"
           r={radius}
           stroke={color}
           strokeWidth={stroke}
@@ -32,7 +32,7 @@ export default function CircleGauge({ label, value, max, color }) {
           strokeDasharray={circumference}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          transform="rotate(-90 100 100)"
+          transform="rotate(-90 200 200)"
         />
       </svg>
 

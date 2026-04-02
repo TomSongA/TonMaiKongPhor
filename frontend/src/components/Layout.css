@@ -19,14 +19,14 @@
 }
 
 .sidebar-logo {
-  font-size: 50px;
+  font-size: 60px;
   line-height: 1;
 }
 
 .sidebar-brand strong {
   display: block;
   color: var(--text-h);
-  font-size: 35px;
+  font-size: 50px;
   letter-spacing: -0.02em;
 }
 

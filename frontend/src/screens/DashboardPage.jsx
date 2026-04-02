@@ -9,7 +9,22 @@ export default function DashboardPage() {
   const sensors = useLiveSensors()
   if (!sensors) return null
 
-  const { reading, history, lastUpdated, psi, stressReasons } = sensors
+  const { history, lastUpdated, psi, stressReasons, error, reading } = sensors
+
+  if (error && !reading) {
+    return (
+      <div className="page">
+        <header className="page-head">
+          <h1>Dashboard</h1>
+        </header>
+        <p className="alert-bad-title">{error}</p>
+        <p className="page-foot">
+          Start the API (e.g. <code>uvicorn app.main:app --reload --port 8000</code> from <code>backend/</code>) and ensure{' '}
+          <code>NEXT_PUBLIC_API_URL</code> points to it (default <code>http://localhost:8000</code>).
+        </p>
+      </div>
+    )
+  }
 
   const lastStr = new Date(lastUpdated).toLocaleString('en-GB', {
     dateStyle: 'medium',
@@ -25,6 +40,7 @@ export default function DashboardPage() {
           <span className="live-dot" aria-hidden />
           Latest update: <time dateTime={new Date(lastUpdated).toISOString()}>{lastStr}</time>
         </p>
+        {error && <p className="page-foot" style={{ color: 'var(--danger)' }}>{error}</p>}
       </header>
 
       <PsiBar value={psi} />
@@ -57,7 +73,7 @@ export default function DashboardPage() {
               </ul>
             ) : (
               <p className="realtime-card__calm">
-                Every sensor is within the safe threshold right now. Great job keeping the tree happy!
+                Latest reading is within the Healthy range (backend classification).
               </p>
             )}
           </article>
@@ -65,9 +81,13 @@ export default function DashboardPage() {
           <article className="realtime-card realtime-card--chart">
             <div className="realtime-card__header">
               <h3>Live graph</h3>
-              <span className="realtime-card__hint">Updated every hour</span>
+              <span className="realtime-card__hint">Today’s readings from API + poll every 10s</span>
             </div>
-            <MultiSensorChart history={history} />
+            {history.length === 0 ? (
+              <p className="page-foot">No points yet.</p>
+            ) : (
+              <MultiSensorChart history={history} />
+            )}
           </article>
         </div>
       </section>

@@ -51,6 +51,22 @@ class HistoryPoint(BaseModel):
     psi_level: str
 
 
+class ReadingRow(BaseModel):
+    """Single stored sensor row (for charts / tables)."""
+
+    id: int
+    soil: float
+    temp: float
+    humidity: float
+    light: float
+    psi_score: float
+    psi_level: str
+    timestamp: datetime
+
+    class Config:
+        from_attributes = True
+
+
 class PredictionResponse(BaseModel):
     predicted_psi: float
     predicted_level: str

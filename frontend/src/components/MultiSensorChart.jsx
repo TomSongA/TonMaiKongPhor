@@ -39,11 +39,14 @@ export default function RealtimeChart({ history }) {
 
   const rows = chartRows.length > 0 ? chartRows : formatData(history.slice(-MAX_POINTS))
 
+  const lightLabel =
+    latest.lightLux != null ? `${Math.round(latest.lightLux)} lux` : `${latest.light.toFixed(0)}%`
+
   const stats = [
     { key: 'soil', label: 'Soil', value: `${latest.soil.toFixed(0)}%` },
     { key: 'temp', label: 'Temp', value: `${latest.tempC.toFixed(1)}°C` },
     { key: 'humidity', label: 'Humidity', value: `${latest.humidity.toFixed(0)}%` },
-    { key: 'light', label: 'Light', value: `${latest.light.toFixed(0)}%` },
+    { key: 'light', label: 'Light', value: lightLabel },
   ]
 
   return (
@@ -82,7 +85,7 @@ export default function RealtimeChart({ history }) {
                 if (name === 'temp') return [`${num} °C`, 'Temp']
                 if (name === 'RH') return [`${num} %`, 'Humidity']
                 if (name === 'soil') return [`${num} %`, 'Soil']
-                if (name === 'light') return [`${num} %`, 'Light']
+                if (name === 'light') return [`${num} (chart scale)`, 'Light']
                 return num
               }}
             />

@@ -21,8 +21,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",   # React dev server
-        "http://localhost:4173",   # React preview
+        "http://localhost:3000",   # Next.js dev
+        "http://localhost:5173",   # Vite
+        "http://localhost:4173",   # Vite preview
     ],
     allow_credentials=True,
     allow_methods=["*"],

@@ -13,7 +13,17 @@ url = URL.create(
     database=settings.DB_NAME,
 )
 
-engine = create_engine(url, pool_pre_ping=True, pool_recycle=3600)
+# Hosted MySQL often caps max_user_connections (e.g. 5). Default SQLAlchemy pool_size=5
+# + max_overflow=10 can exceed that when MQTT + many API calls overlap.
+# One pooled connection per process keeps total DB sessions predictable; requests wait in queue.
+engine = create_engine(
+    url,
+    pool_pre_ping=True,
+    pool_recycle=3600,
+    pool_size=1,
+    max_overflow=0,
+    pool_timeout=120,
+)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()

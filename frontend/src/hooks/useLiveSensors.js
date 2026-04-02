@@ -1,78 +1,111 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { appendPoint } from '../lib/sensorLogic'
 import {
-  appendPoint,
-  computePsi,
-  evaluateStress,
-  randomReading,
-} from '../lib/sensorLogic'
+  fetchLatestReading,
+  fetchReadingsRange,
+  mapReadingRow,
+  reasonsFromLatestResponse,
+  wellnessFromStressPsi,
+} from '../lib/sensorApi'
 
-const TICK_MS = 3600000
+const POLL_MS = 10000
+const HISTORY_CAP = 500
+
+function ymd(d) {
+  const x = new Date(d)
+  const y = x.getFullYear()
+  const m = String(x.getMonth() + 1).padStart(2, '0')
+  const day = String(x.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
 
 export function useLiveSensors() {
   const [reading, setReading] = useState(null)
   const [history, setHistory] = useState([])
   const [lastUpdated, setLastUpdated] = useState(null)
-  const seedRef = useRef(null)
+  const [error, setError] = useState(null)
+  const [ready, setReady] = useState(false)
 
-  // ย้าย init ทั้งหมดมาไว้ใน useEffect — รันฝั่ง client อย่างเดียว
-  useEffect(() => {
-    const initial = randomReading()
-    const h = []
-    let r = initial
-  
-    const now = Date.now()
-    const midnight = new Date()
-    midnight.setHours(0, 0, 0, 0)
-    const msSinceMidnight = now - midnight.getTime()
-    const totalPoints = Math.floor(msSinceMidnight / TICK_MS)
-  
-    for (let i = 0; i < totalPoints; i++) {
-      r = randomReading({
-        soil: r.soil + (Math.random() - 0.5) * 4,
-        tempC: r.tempC + (Math.random() - 0.5) * 0.8,
-        humidity: r.humidity + (Math.random() - 0.5) * 3,
-        light: r.light + (Math.random() - 0.5) * 6,
-        at: midnight.getTime() + i * TICK_MS,
-      })
-      h.push(r)
+  const applyLatest = useCallback((apiRow) => {
+    const m = mapReadingRow(apiRow)
+    setReading(m)
+    setLastUpdated(m.at)
+    return m
+  }, [])
+
+  const load = useCallback(async () => {
+    const today = ymd(Date.now())
+    let latest
+    try {
+      latest = await fetchLatestReading()
+    } catch (e) {
+      const msg =
+        e?.response?.status === 404
+          ? 'No sensor readings in database yet. POST data to /api/sensor or start MQTT.'
+          : e?.message || 'Cannot reach API'
+      setError(msg)
+      setReading(null)
+      setHistory([])
+      setLastUpdated(null)
+      setReady(true)
+      return
     }
-  
-    seedRef.current = r
-    setReading(r)
-    setHistory(h)
-    setLastUpdated(Date.now())
-  }, [])
 
-  const tick = useCallback(() => {
-    const prev = seedRef.current
-    if (!prev) return
-    const next = randomReading({
-      soil: prev.soil + (Math.random() - 0.5) * 6,
-      tempC: prev.tempC + (Math.random() - 0.5) * 1.2,
-      humidity: prev.humidity + (Math.random() - 0.5) * 5,
-      light: prev.light + (Math.random() - 0.5) * 10,
-      at: Date.now(),
-    })
-    seedRef.current = next
-    setReading(next)
-    setHistory((h) => appendPoint(h, next, 99999))
-    setLastUpdated(next.at)
-  }, [])
+    applyLatest(latest)
+    setError(null)
+
+    let dayRows = []
+    try {
+      dayRows = await fetchReadingsRange(today, today)
+    } catch {
+      dayRows = []
+    }
+
+    const mappedDay = dayRows.length ? dayRows : [mapReadingRow(latest)]
+    setHistory(mappedDay.slice(-HISTORY_CAP))
+    setReady(true)
+  }, [applyLatest])
 
   useEffect(() => {
-    const id = setInterval(tick, TICK_MS)
-    return () => clearInterval(id)
-  }, [tick])
+    const t = window.setTimeout(() => {
+      void load()
+    }, 0)
+    return () => window.clearTimeout(t)
+  }, [load])
 
-  // reading เป็น null ตอน SSR
-  if (!reading) return null
+  const tick = useCallback(async () => {
+    try {
+      const latest = await fetchLatestReading()
+      const m = applyLatest(latest)
+      setHistory((prev) => {
+        const last = prev[prev.length - 1]
+        if (last && m.id != null && last.id === m.id) return prev
+        return appendPoint(prev, m, HISTORY_CAP)
+      })
+      setError(null)
+    } catch {
+      /* keep last good values */
+    }
+  }, [applyLatest])
+
+  useEffect(() => {
+    if (!ready || error) return undefined
+    const id = setInterval(tick, POLL_MS)
+    return () => clearInterval(id)
+  }, [ready, error, tick])
+
+  if (!ready) return null
+
+  const psi = reading ? wellnessFromStressPsi(reading.psiScore) : 0
+  const stressReasons = reading ? reasonsFromLatestResponse(reading) : []
 
   return {
     reading,
     history,
     lastUpdated,
-    psi: computePsi(reading),
-    stressReasons: evaluateStress(reading),
-    refresh: tick,
+    psi,
+    stressReasons,
+    error,
+    refresh: load,
   }
 }

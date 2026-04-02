@@ -1,41 +1,56 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { generateDaySummary } from '../lib/sensorLogic'
+import { useEffect, useState } from 'react'
+import { fetchReadingsRange } from '../lib/sensorApi'
 import './Page.css'
 
-function padRows(samples) {
-  return samples.map((r, idx) => ({
-    id: idx + 1,
-    time: new Date(r.at).toLocaleTimeString('en-GB', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    }),
-    soil: r.soil.toFixed(1),
-    temp: r.tempC.toFixed(1),
-    humidity: r.humidity.toFixed(0),
-    light: r.light.toFixed(0),
-  }))
-}
-
 export default function DataTablePage() {
-  const [dateStr, setDateStr] = useState(() => {
-    const d = new Date()
-    return d.toISOString().slice(0, 10)
-  })
+  const [dateStr, setDateStr] = useState(() => new Date().toISOString().slice(0, 10))
+  const [rows, setRows] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
-  const rows = useMemo(() => {
-    const ts = new Date(dateStr + 'T12:00:00').getTime()
-    const day = generateDaySummary(ts)
-    return padRows(day.samples)
+  useEffect(() => {
+    let cancelled = false
+    async function load() {
+      setLoading(true)
+      setError(null)
+      try {
+        const data = await fetchReadingsRange(dateStr, dateStr)
+        if (cancelled) return
+        setRows(
+          data.map((r, idx) => ({
+            id: r.id ?? idx + 1,
+            time: new Date(r.at).toLocaleString('en-GB', {
+              dateStyle: 'short',
+              timeStyle: 'medium',
+            }),
+            soil: r.soil.toFixed(1),
+            temp: r.tempC.toFixed(1),
+            humidity: r.humidity.toFixed(0),
+            light: r.lightLux != null ? String(Math.round(r.lightLux)) : r.light.toFixed(0),
+            lightUnit: r.lightLux != null ? 'lux' : 'scaled',
+          })),
+        )
+      } catch (e) {
+        if (cancelled) return
+        setError(e?.message || 'Failed to load')
+        setRows([])
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    load()
+    return () => {
+      cancelled = true
+    }
   }, [dateStr])
 
   return (
     <div className="page">
       <header className="page-head">
         <h1>Data table</h1>
-        <p className="page-desc">Select a date to retrieve a sample set (the same set as in calendar mode).</p>
+        <p className="page-desc">Rows from <code>/api/readings</code> for the selected date.</p>
       </header>
 
       <div className="table-toolbar">
@@ -45,6 +60,9 @@ export default function DataTablePage() {
         </label>
       </div>
 
+      {error && <p className="alert-bad-title">{error}</p>}
+      {loading && <p className="page-foot">Loading…</p>}
+
       <div className="table-scroll card-block">
         <table className="data-table">
           <thead>
@@ -52,9 +70,9 @@ export default function DataTablePage() {
               <th>#</th>
               <th>time</th>
               <th>soil (%)</th>
-              <th>tmep (°C)</th>
+              <th>temp (°C)</th>
               <th>RH (%)</th>
-              <th>light (%)</th>
+              <th>light</th>
             </tr>
           </thead>
           <tbody>
@@ -65,11 +83,16 @@ export default function DataTablePage() {
                 <td>{r.soil}</td>
                 <td>{r.temp}</td>
                 <td>{r.humidity}</td>
-                <td>{r.light}</td>
+                <td>
+                  {r.light} {r.lightUnit}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+        {!loading && rows.length === 0 && !error && (
+          <p className="page-foot">No readings for this date.</p>
+        )}
       </div>
     </div>
   )

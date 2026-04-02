@@ -78,11 +78,12 @@ export default function RealtimeChart({ history }) {
                 fontSize: 16,
               }}
               formatter={(value, name) => {
-                if (name === 'temp') return [`${value} °C`, 'Temp']
-                if (name === 'RH') return [`${value} %`, 'Humidity']
-                if (name === 'soil') return [`${value} %`, 'Soil']
-                if (name === 'light') return [`${value} %`, 'Light']
-                return value
+                const num = Number(value).toFixed(2)
+                if (name === 'temp') return [`${num} °C`, 'Temp']
+                if (name === 'RH') return [`${num} %`, 'Humidity']
+                if (name === 'soil') return [`${num} %`, 'Soil']
+                if (name === 'light') return [`${num} %`, 'Light']
+                return num
               }}
             />
 

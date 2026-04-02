@@ -6,7 +6,7 @@
 }
 
 .page h1 {
-  margin: 0 0 16px;
+  margin: 0 0 18px;
   font-size: 46px;
   letter-spacing: -0.05em;
   color: var(--text-h);
@@ -23,7 +23,7 @@
   color: var(--text-muted);
   font-size: 20px;
   line-height: 1.5;
-  max-width: 640px;
+  max-width: none;
 }
 
 .page-meta {

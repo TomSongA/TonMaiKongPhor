@@ -52,10 +52,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 15px;
-  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -95,10 +91,10 @@
     --danger: #f47171;
     --danger-dim: #b44444;
 
-    --chart-soil: #d4a84b;
+    --chart-soil: #a7985d;
     --chart-temp: #ff8a80;
     --chart-hum: #7ec8e3;
-    --chart-light: #ffcc80;
+    --chart-light: #f9ef93;
   }
 }
 

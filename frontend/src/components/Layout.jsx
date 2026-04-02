@@ -1,4 +1,7 @@
-import { NavLink, Outlet } from 'react-router-dom'
+'use client'
+
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import './Layout.css'
 
 const nav = [
@@ -8,10 +11,12 @@ const nav = [
   { to: '/notifications', label: 'Notification' },
 ]
 
-export default function Layout() {
+export default function Layout({ children }) {
+  const pathname = usePathname()
+
   return (
     <div className="app-shell">
-      <aside className="sidebar" aria-label="เมนูหลัก">
+      <aside className="sidebar" aria-label="main">
         <div className="sidebar-brand">
           <span className="sidebar-logo" aria-hidden>
             🌱
@@ -23,25 +28,25 @@ export default function Layout() {
         </div>
         <nav className="sidebar-nav">
           {nav.map((item) => (
-            <NavLink
+            <Link
               key={item.to}
-              to={item.to}
-              end={item.end}
-              className={({ isActive }) =>
-                'sidebar-link' + (isActive ? ' sidebar-link--active' : '')
+              href={item.to}
+              className={
+                'sidebar-link' +
+                ((item.end ? pathname === item.to : pathname.startsWith(item.to))
+                  ? ' sidebar-link--active'
+                  : '')
               }
             >
               {item.label}
-            </NavLink>
+            </Link>
           ))}
         </nav>
         <p className="sidebar-foot">
           Sample data: API connection available at: <code>src/lib</code>
         </p>
       </aside>
-      <main className="main-panel">
-        <Outlet />
-      </main>
+      <main className="main-panel">{children}</main>
     </div>
   )
 }

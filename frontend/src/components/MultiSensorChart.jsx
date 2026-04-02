@@ -10,7 +10,6 @@ import {
   CartesianGrid,
   Legend,
 } from 'recharts'
-import CircleGauge from './CircleGauge'
 
 const MAX_POINTS = 30  // จำนวนจุดที่แสดง (เลื่อนกราฟ)
 
@@ -40,59 +39,61 @@ export default function RealtimeChart({ history }) {
 
   const rows = chartRows.length > 0 ? chartRows : formatData(history.slice(-MAX_POINTS))
 
+  const stats = [
+    { key: 'soil', label: 'Soil', value: `${latest.soil.toFixed(0)}%` },
+    { key: 'temp', label: 'Temp', value: `${latest.tempC.toFixed(1)}°C` },
+    { key: 'humidity', label: 'Humidity', value: `${latest.humidity.toFixed(0)}%` },
+    { key: 'light', label: 'Light', value: `${latest.light.toFixed(0)}%` },
+  ]
+
   return (
-    <div className="sensor-card">
+    <div className="realtime-chart">
+      <div className="realtime-chart__stats">
+        {stats.map((stat) => (
+          <div key={stat.key} className="realtime-chip" data-tone={stat.key}>
+            <span>{stat.label}</span>
+            <strong>{stat.value}</strong>
+          </div>
+        ))}
+      </div>
 
-        <div className="circle-grid">
-            <CircleGauge label="Soil" value={latest.soil} max={100} color="var(--chart-soil)" />
-            <CircleGauge label="Temp" value={latest.tempC} max={50} color="var(--chart-temp)" />
-            <CircleGauge label="Humidity" value={latest.humidity} max={100} color="var(--chart-hum)" />
-            <CircleGauge label="Light" value={latest.light} max={100} color="var(--chart-light)" />
-        </div>
+      <div className="realtime-chart__canvas">
+        <ResponsiveContainer width="100%" height={320}>
+          <LineChart data={rows} margin={{ top: 8, right: 16, left: 0, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
 
-        <div className='stress-gauge'>
-          <ResponsiveContainer width="100%" height={320}>
-              <LineChart
-                data={chartRows}
-                margin={{ top: 8, right: 16, left: 0, bottom: 0 }}
-              >
-              <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
+            <XAxis
+              dataKey="time"
+              tick={{ fontSize: 16 }}
+              stroke="var(--chart-axis)"
+              interval="preserveStartEnd"
+            />
+            <YAxis tick={{ fontSize: 16 }} stroke="var(--chart-axis)" />
 
-              <XAxis
-                  dataKey="time"
-                  tick={{ fontSize: 18 }}
-                  stroke="var(--chart-axis)"
-                  interval="preserveStartEnd"
-              />
-              <YAxis
-                  tick={{ fontSize: 20 }}
-                  stroke="var(--chart-axis)"
-              />
+            <Tooltip
+              contentStyle={{
+                background: 'var(--card-bg)',
+                border: '1px solid var(--border)',
+                borderRadius: 8,
+                fontSize: 16,
+              }}
+              formatter={(value, name) => {
+                if (name === 'temp') return [`${value} °C`, 'Temp']
+                if (name === 'RH') return [`${value} %`, 'Humidity']
+                if (name === 'soil') return [`${value} %`, 'Soil']
+                if (name === 'light') return [`${value} %`, 'Light']
+                return value
+              }}
+            />
 
-              <Tooltip
-                  contentStyle={{
-                  background: 'var(--card-bg)',
-                  border: '1px solid var(--border)',
-                  borderRadius: 8,
-                  }}
-                  formatter={(value, name) => {
-                  if (name === 'temp') return [`${value} °C`, 'Temp']
-                  if (name === 'RH') return [`${value} %`, 'Humidity']
-                  if (name === 'soil') return [`${value} %`, 'Soil']
-                  if (name === 'light') return [`${value} %`, 'Light']
-                  return value
-                  }}
-              />
+            <Legend wrapperStyle={{ fontSize: '18px' }} />
 
-              <Legend wrapperStyle={{ fontSize: '26px' }}/>
-
-                <Line type="monotone" dataKey="soil" stroke="var(--chart-soil)" dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="temp" stroke="var(--chart-temp)" dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="RH" stroke="var(--chart-hum)" dot={false} strokeWidth={2} />
-                <Line type="monotone" dataKey="light" stroke="var(--chart-light)" dot={false} strokeWidth={2} />
-
-              </LineChart>
-          </ResponsiveContainer>
+            <Line type="monotone" dataKey="soil" stroke="var(--chart-soil)" dot={false} strokeWidth={2} />
+            <Line type="monotone" dataKey="temp" stroke="var(--chart-temp)" dot={false} strokeWidth={2} />
+            <Line type="monotone" dataKey="RH" stroke="var(--chart-hum)" dot={false} strokeWidth={2} />
+            <Line type="monotone" dataKey="light" stroke="var(--chart-light)" dot={false} strokeWidth={2} />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
     </div>
   )

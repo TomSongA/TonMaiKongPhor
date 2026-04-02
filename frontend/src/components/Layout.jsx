@@ -10,7 +10,6 @@ const nav = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/calendar', label: 'Data calendar' },
   { to: '/data', label: 'Data table' },
-  { to: '/notifications', label: 'Notification' },
 ]
 
 const poppins = Poppins({ 
@@ -26,14 +25,10 @@ export default function Layout({ children }) {
     <div className={`app-shell ${poppins.className}`}>
       {/* <div className="app-shell"> */}
         <aside className="sidebar" aria-label="main">
-          <div className="sidebar-brand">
-            <span className="sidebar-logo" aria-hidden>
-              🌱
+          <div className="sidebar-brand" aria-label="TonMaiKongPhor">
+            <span className="sidebar-logo">
+              <img src="/logo.png" alt="TonMaiKongPhor logo" width="160" height="160" />
             </span>
-            <div>
-              <strong>TonMaiKongPhor</strong>
-              <span className="sidebar-sub">Tree monitor</span>
-            </div>
           </div>
           <nav className="sidebar-nav">
             {nav.map((item) => (

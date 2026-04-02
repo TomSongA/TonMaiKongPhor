@@ -14,7 +14,7 @@
 
 .sensor-item strong {
   display: block;
-  font-size: 16px;
+  font-size: 30px;
   color: var(--text-h);
 }
 
@@ -68,7 +68,7 @@
   border: 1px solid var(--border);  /* กรอบ */
   border-radius: 12px;              /* มุมโค้ง */
   padding: 30px 40px;
-  height: 300px;
+  height: 550px;
 }
 
 .circle-gauge svg {
@@ -84,14 +84,14 @@
 
 .circle-center {
   position: absolute;
-  top: 45%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 20px;
+  font-size: 40px;
 }
 
 .circle-gauge p {
   margin-top: 6px;
-  font-size: 20px;
+  font-size: 30px;
   color: var(--text-muted);
 }

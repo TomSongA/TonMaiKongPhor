@@ -6,7 +6,7 @@ import {
   randomReading,
 } from '../lib/sensorLogic'
 
-const TICK_MS = 3500
+const TICK_MS = 3600000
 
 export function useLiveSensors() {
   const [reading, setReading] = useState(null)
@@ -19,18 +19,26 @@ export function useLiveSensors() {
     const initial = randomReading()
     const h = []
     let r = initial
-    for (let i = 0; i < 24; i++) {
+  
+    const now = Date.now()
+    const midnight = new Date()
+    midnight.setHours(0, 0, 0, 0)
+    const msSinceMidnight = now - midnight.getTime()
+    const totalPoints = Math.floor(msSinceMidnight / TICK_MS)
+  
+    for (let i = 0; i < totalPoints; i++) {
       r = randomReading({
         soil: r.soil + (Math.random() - 0.5) * 4,
         tempC: r.tempC + (Math.random() - 0.5) * 0.8,
         humidity: r.humidity + (Math.random() - 0.5) * 3,
         light: r.light + (Math.random() - 0.5) * 6,
-        at: Date.now() - (24 - i) * TICK_MS,
+        at: midnight.getTime() + i * TICK_MS,
       })
       h.push(r)
     }
-    seedRef.current = initial
-    setReading(initial)
+  
+    seedRef.current = r
+    setReading(r)
     setHistory(h)
     setLastUpdated(Date.now())
   }, [])
@@ -47,7 +55,7 @@ export function useLiveSensors() {
     })
     seedRef.current = next
     setReading(next)
-    setHistory((h) => appendPoint(h, next))
+    setHistory((h) => appendPoint(h, next, 99999))
     setLastUpdated(next.at)
   }, [])
 

@@ -33,13 +33,12 @@ export default function DashboardPage() {
         <h2 id="sensors-heading" className="section-title">
           Real-time sensor
         </h2>
+        <p className="page-foot">
+          Current (raw) value: Soil {reading.soil.toFixed(0)}% · {reading.tempC.toFixed(1)}°C · RH{' '}
+          {reading.humidity.toFixed(0)}% · light {reading.light.toFixed(0)}%
+        </p>
         <MultiSensorChart history={history} />
       </section>
-
-      <p className="page-foot">
-        Current (raw) value: Soil {reading.soil.toFixed(0)}% · {reading.tempC.toFixed(1)}°C · RH{' '}
-        {reading.humidity.toFixed(0)}% · light {reading.light.toFixed(0)}%
-      </p>
     </div>
   )
 }

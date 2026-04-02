@@ -7,9 +7,10 @@ import './Page.css'
 function padRows(samples) {
   return samples.map((r, idx) => ({
     id: idx + 1,
-    time: new Date(r.at).toLocaleString('en-GB', {
-      dateStyle: 'short',
-      timeStyle: 'medium',
+    time: new Date(r.at).toLocaleTimeString('en-GB', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
     }),
     soil: r.soil.toFixed(1),
     temp: r.tempC.toFixed(1),

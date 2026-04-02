@@ -1,6 +1,12 @@
+.page {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
 .page h1 {
-  margin: 0 0 4px;
-  padding: 15px 25px;
+  margin: 0 0 18px;
   font-size: 46px;
   letter-spacing: -0.05em;
   color: var(--text-h);
@@ -8,21 +14,21 @@
 
 .page-head {
   margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border-strong);
 }
 
 .page-desc {
   margin: 0;
   color: var(--text-muted);
-  padding: 0 25px;
   font-size: 20px;
   line-height: 1.5;
-  max-width: 640px;
+  max-width: none;
 }
 
 .page-meta {
-  margin: 4px 0 0;
-  padding: 15px 25px;
-  font-size: 28px;
+  margin: 16px 0 0;
+  font-size: 24px;
   color: var(--text-muted);
   display: flex;
   align-items: center;
@@ -45,11 +51,12 @@
 }
 
 .section-title {
-  padding: 15px 25px;
   font-size: 30px;
   font-weight: 600;
   color: var(--text-h);
-  margin: 0 0 14px;
+  margin: 0 0 18px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border-strong);
 }
 
 .sensor-grid {
@@ -60,10 +67,150 @@
 }
 
 .page-foot {
-  padding: 15px 25px;
-  margin-top: 20px;
-  font-size: 25px;
+  margin-top: 16px;
+  font-size: 22px;
   color: var(--text-muted);
+}
+
+.realtime-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+  gap: 24px;
+  align-items: stretch;
+}
+
+.realtime-card {
+  background: var(--card-bg);
+  border: 2px solid var(--border-strong);
+  border-radius: 20px;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.realtime-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.realtime-card__header h3 {
+  margin: 0;
+  font-size: 28px;
+  color: var(--text-h);
+}
+
+.realtime-card__hint {
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.realtime-alerts {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 20px;
+  color: var(--text);
+  line-height: 1.45;
+}
+
+.realtime-alerts li {
+  margin-bottom: 6px;
+}
+
+.realtime-alerts strong {
+  display: block;
+  color: var(--text-h);
+}
+
+.realtime-card__calm {
+  font-size: 22px;
+  color: var(--ok-text);
+  background: var(--ok-soft);
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+
+.realtime-values {
+  font-size: 20px;
+  color: var(--text-muted);
+  margin: auto 0 0;
+}
+
+.realtime-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  height: 100%;
+}
+
+.realtime-chart__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+
+.realtime-chip {
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 18px;
+  color: var(--text-muted);
+  background: var(--card-bg);
+}
+
+.realtime-chip strong {
+  font-size: 28px;
+  color: var(--text-h);
+}
+
+.realtime-chip[data-tone='soil'] {
+  border-color: var(--chart-soil);
+}
+
+.realtime-chip[data-tone='temp'] {
+  border-color: var(--chart-temp);
+}
+
+.realtime-chip[data-tone='humidity'] {
+  border-color: var(--chart-hum);
+}
+
+.realtime-chip[data-tone='light'] {
+  border-color: var(--chart-light);
+}
+
+.realtime-chart__canvas {
+  border: 2px solid var(--border-strong);
+  border-radius: 18px;
+  padding: 12px;
+  background: var(--card-bg);
+  flex: 1;
+  min-height: 340px;
+}
+
+.realtime-card--chart {
+  padding-bottom: 32px;
+}
+
+@media (max-width: 1100px) {
+  .realtime-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 0 18px 32px;
+  }
+
+  .realtime-card {
+    border-radius: 20px;
+  }
 }
 
 /* ===== Calendar split layout ===== */
@@ -273,25 +420,29 @@
 /* ===== Table page ===== */
 
 .table-toolbar {
-  margin-bottom: 10px;
+  margin: 0 25px 12px;
 }
 
 .field-inline {
-  padding: 15px 26px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 25px;
+  padding: 12px 22px;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 18px;
+  font-size: 22px;
   color: var(--text-muted);
-  max-width: 220px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--card-bg);
 }
 
 .field-inline input {
-  padding: 15px 25px;
-  border-radius: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
   border: 1px solid var(--border);
   background: var(--bg);
   color: var(--text-h);
+  font-size: 20px;
 }
 
 .table-scroll {

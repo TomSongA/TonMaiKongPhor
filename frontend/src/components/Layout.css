@@ -54,6 +54,10 @@
   transition: background 0.15s, color 0.15s;
 }
 
+.sidebar-foot {
+  font-family: var(--font-poppins), 'Poppins', sans-serif;
+}
+
 .sidebar-link:hover {
   background: var(--card-bg);
   color: var(--text-h);
@@ -72,4 +76,8 @@
 
 .sidebar-foot code {
   font-size: 15px;
+}
+
+* {
+  font-family: var(--font-poppins), Poppins, sans-serif;
 }

@@ -1,0 +1,129 @@
+/* [project]/src/index.css [app-client] (css) */
+:root {
+  --text: #5c5a66;
+  --text-h: #14121a;
+  --text-muted: #7c7a88;
+  --bg: #f4f6f3;
+  --border: #e2e5e0;
+  --code-bg: #eef1ec;
+  --accent: #2d6a4f;
+  --accent-soft: #2d6a4f24;
+  --accent-border: #2d6a4f73;
+  --social-bg: #edf1eacc;
+  --shadow: #14121a14 0 12px 24px -8px, #14121a0d 0 4px 8px -4px;
+  --shadow-sm: 0 2px 8px #14121a0f;
+  --sidebar-bg: #edece8;
+  --sidebar-hover: #2d6a4f14;
+  --card-bg: #fff;
+  --track-bg: #e5e8e4;
+  --chart-axis: #9aa096;
+  --table-head: #f0f2ee;
+  --ok: #2d6a4f;
+  --ok-dim: #74a892;
+  --ok-soft: #2d6a4f1f;
+  --ok-text: #1b4332;
+  --ok-glow: #2d6a4f40;
+  --warn: #b86b00;
+  --warn-dim: #d4a256;
+  --warn-soft: #b86b001f;
+  --warn-text: #7a4a00;
+  --danger: #b42318;
+  --danger-dim: #d4746c;
+  --chart-soil: #8b6914;
+  --chart-temp: #c75146;
+  --chart-hum: #457b9d;
+  --chart-light: #f4a261;
+  --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --heading: system-ui, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+  font: 16px/145% var(--sans);
+  letter-spacing: .01em;
+  --lightningcss-light: initial;
+  --lightningcss-dark: ;
+  color-scheme: light;
+  color: var(--text);
+  background: var(--bg);
+  font-synthesis: none;
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #b8bdb4;
+    --text-h: #eef2ea;
+    --text-muted: #8f968a;
+    --bg: #121411;
+    --border: #2a3028;
+    --code-bg: #1a1e18;
+    --accent: #6abf8f;
+    --accent-soft: #6abf8f2e;
+    --accent-border: #6abf8f73;
+    --social-bg: #24282299;
+    --shadow: #00000073 0 12px 28px -10px, #0000004d 0 4px 10px -4px;
+    --shadow-sm: 0 2px 10px #00000059;
+    --sidebar-bg: #181c17;
+    --sidebar-hover: #6abf8f1a;
+    --card-bg: #1c211b;
+    --track-bg: #2a3028;
+    --chart-axis: #7a8275;
+    --table-head: #222820;
+    --ok: #6abf8f;
+    --ok-dim: #4a8f66;
+    --ok-soft: #6abf8f26;
+    --ok-text: #c8eed6;
+    --ok-glow: #6abf8f4d;
+    --warn: #e6a64a;
+    --warn-dim: #a67c32;
+    --warn-soft: #e6a64a26;
+    --warn-text: #f0d39a;
+    --danger: #f47171;
+    --danger-dim: #b44444;
+    --chart-soil: #a7985d;
+    --chart-temp: #ff8a80;
+    --chart-hum: #7ec8e3;
+    --chart-light: #f9ef93;
+  }
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  text-align: left;
+  box-sizing: border-box;
+  border: none;
+  width: 100%;
+  max-width: none;
+  min-height: 100svh;
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-family: var(--heading);
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+p {
+  margin: 0;
+}
+
+code {
+  font-family: var(--mono);
+  color: var(--text-h);
+  background: var(--code-bg);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 13px;
+  line-height: 135%;
+  display: inline-flex;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/*# sourceMappingURL=src_index_0n~82ls.css.map*/

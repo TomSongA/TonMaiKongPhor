@@ -10,7 +10,7 @@ const nav = [
   { to: '/', label: 'Dashboard', end: true },
   { to: '/calendar', label: 'Data calendar' },
   { to: '/data', label: 'Data table' },
-  { to: '/notifications', label: 'Notifications' },
+  // { to: '/notifications', label: 'Notifications' },
 ]
 
 const poppins = Poppins({ 

@@ -448,6 +448,8 @@
 .table-scroll {
   margin: 0 25px;
   overflow: auto;
+  overflow-y: auto;
+  max-height: 60vh;
   padding: 0;
 }
 

@@ -8,7 +8,7 @@ import {
   wellnessFromStressPsi,
 } from '../lib/sensorApi'
 
-const POLL_MS = 900000
+const POLL_MS = 10000
 const HISTORY_CAP = 500
 
 function ymd(d) {

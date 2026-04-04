@@ -65,7 +65,7 @@ export default function DataTablePage() {
 
       <div className="table-scroll card-block">
         <table className="data-table">
-          <thead>
+          <thead style={{ position: 'sticky', top: 0, zIndex: 1 }}>
             <tr>
               <th>#</th>
               <th>time</th>

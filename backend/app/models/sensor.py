@@ -16,3 +16,14 @@ class SensorReading(Base):
     outdoor_humidity = Column(Float, nullable=True)
     rain_probability = Column(Float, nullable=True)
     timestamp = Column (DateTime, server_default=func.now())
+
+class PredictionLog(Base):
+    __tablename__ = "prediction_logs"
+
+    id = Column(Integer, primary_key=True, index=True)
+    predicted_psi = Column(Float, nullable=False)
+    predicted_level = Column(String(20), nullable=False)
+    hours_ahead = Column(Integer, nullable=False)
+    confidence = Column(String(10), nullable=False)
+    method = Column(String(20), nullable=False)
+    timestamp = Column(DateTime, server_default=func.now())

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from typing import List
+from app.models.sensor import SensorReading, PredictionLog
 import pandas as pd
 import numpy as np
 import joblib
@@ -150,6 +151,17 @@ def get_prediction(hours_ahead: int = 3, db: Session = Depends(get_db)):
     # Lower confidence if using fallback
     if method == "linear_regression":
         confidence = "low"
+
+    # Save to DB
+    log = PredictionLog(
+        predicted_psi=predicted_psi,
+        predicted_level=predicted_level,
+        hours_ahead=hours_ahead,
+        confidence=confidence,
+        method=method,
+    )
+    db.add(log)
+    db.commit()
 
     return PredictionResponse(
         predicted_psi=predicted_psi,

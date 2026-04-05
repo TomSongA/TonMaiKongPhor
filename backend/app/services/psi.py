@@ -76,7 +76,10 @@ class PSIResult:
     breakdown: dict
 
 def calculate_psi(soil, temp, humidity, light) -> PSIResult:
-    soil_score  = score_soil(soil)
+    # แปลง raw ADC (0-4095) -> % (0-100) ค่าสูง = แห้ง
+    soil_pct = round((soil / 4095) * 100, 1)
+
+    soil_score  = score_soil(soil_pct)
     temp_score  = score_temp(temp)
     light_score = score_light(light)
 
@@ -90,7 +93,7 @@ def calculate_psi(soil, temp, humidity, light) -> PSIResult:
     return PSIResult(
         psi_score   = psi_score,
         psi_level   = get_psi_level(psi_score),
-        explanation = build_explanation(soil, temp, humidity, light, soil_score, temp_score, light_score),
+        explanation = build_explanation(soil_pct, temp, humidity, light, soil_score, temp_score, light_score),  # แก้ soil → soil_pct
         advice      = build_advice(soil_score, temp_score, light_score, get_psi_level(psi_score)),
         breakdown   = {
             "soil_score":  soil_score,

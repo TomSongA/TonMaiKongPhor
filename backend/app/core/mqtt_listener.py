@@ -74,16 +74,21 @@ def start_mqtt_listener():
     client.on_disconnect = on_disconnect
     client.on_message    = on_message
 
+    client.reconnect_delay_set(min_delay=1, max_delay=30)
+    client.connect_async(settings.MQTT_BROKER, settings.MQTT_PORT, keepalive=30)
+
     print(f"onnecting to {settings.MQTT_BROKER}:{settings.MQTT_PORT}...")
 
-    while True:
-        try:
-            client.connect(settings.MQTT_BROKER, settings.MQTT_PORT, keepalive=60)
-            client.loop_forever()
-        except Exception as e:
-            print(f"Connection error: {e}")
-            print("Retrying in 5 seconds...")
-            time.sleep(5)
+    client.loop_forever(retry_first_connection=True)
+
+    # while True:
+    #     try:
+    #         client.connect(settings.MQTT_BROKER, settings.MQTT_PORT, keepalive=60)
+    #         client.loop_forever()
+    #     except Exception as e:
+    #         print(f"Connection error: {e}")
+    #         print("Retrying in 5 seconds...")
+    #         time.sleep(5)
 
 
 if __name__ == "__main__":

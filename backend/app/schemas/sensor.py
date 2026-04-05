@@ -59,6 +59,9 @@ class ReadingRow(BaseModel):
     temp: float
     humidity: float
     light: float
+    outdoor_temp: float | None = None
+    outdoor_humidity: float | None = None
+    rain_probability: float | None = None
     psi_score: float
     psi_level: str
     timestamp: datetime

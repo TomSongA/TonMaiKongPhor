@@ -30,6 +30,11 @@ export default function DataTablePage() {
             humidity: r.humidity.toFixed(0),
             light: r.lightLux != null ? String(Math.round(r.lightLux)) : r.light.toFixed(0),
             lightUnit: r.lightLux != null ? 'lux' : 'scaled',
+            outdoorTemp: r.outdoor_temp != null ? r.outdoor_temp : '-',
+            outdoorHumidity: r.outdoor_humidity != null ? r.outdoor_humidity : '-',
+            rainProb: r.rain_probability != null ? r.rain_probability : '-',
+            psiScore: r.psiScore ?? '-',
+            psiLevel: r.psiLevel ?? '-', 
           })),
         )
       } catch (e) {
@@ -73,6 +78,11 @@ export default function DataTablePage() {
               <th>temp (°C)</th>
               <th>RH (%)</th>
               <th>light</th>
+              <th>outdoor temp</th>
+              <th>outdoor RH</th>
+              <th>rain %</th>
+              <th>PSI score</th>
+              <th>PSI level</th>
             </tr>
           </thead>
           <tbody>
@@ -86,6 +96,11 @@ export default function DataTablePage() {
                 <td>
                   {r.light} {r.lightUnit}
                 </td>
+                <td>{r.outdoorTemp}</td>
+                <td>{r.outdoorHumidity}</td>
+                <td>{r.rainProb}</td>
+                <td>{r.psiScore}</td>
+                <td>{r.psiLevel}</td>
               </tr>
             ))}
           </tbody>

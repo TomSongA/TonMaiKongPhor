@@ -82,7 +82,7 @@ export default function CalendarPage() {
 
   const chartRows = chartSamples.map((r) => ({
     time: new Date(r.at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-    soil: Math.round(r.soil),
+    soil: Math.round((r.soil / 4095) * 100),
     temp: Number(r.tempC.toFixed(1)),
     RH: Math.round(r.humidity),
     light: Math.round(r.light),

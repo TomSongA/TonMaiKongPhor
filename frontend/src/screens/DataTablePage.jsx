@@ -40,7 +40,7 @@ export default function DataTablePage() {
             return {
               id: r.id ?? idx + 1,
               time: formatTime(r.at),
-              soil: r.soil.toFixed(1),
+              soil: ((r.soil / 4095) * 100).toFixed(1),
               temp: r.tempC.toFixed(1),
               humidity: r.humidity.toFixed(0),
               light: lightReading,

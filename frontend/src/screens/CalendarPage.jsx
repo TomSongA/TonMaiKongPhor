@@ -120,7 +120,7 @@ export default function CalendarPage() {
       <header className="page-head">
         <h1>Data calendar</h1>
         <p className="page-desc">
-          Each day shows its wellness score (higher means happier plants). A dash means we didn't receive readings.
+          Each day shows its wellness score (higher means happier plants). A dash means we did not receive readings.
         </p>
       </header>
 

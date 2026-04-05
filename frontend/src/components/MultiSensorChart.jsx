@@ -19,7 +19,7 @@ function formatData(history) {
       hour: '2-digit',
       minute: '2-digit',
     }),
-    soil: r.soil,
+    soil: Math.round((r.soil / 4095) * 100),
     temp: r.tempC,
     RH: r.humidity,
     light: r.light,
@@ -43,7 +43,7 @@ export default function RealtimeChart({ history }) {
     latest.lightLux != null ? `${Math.round(latest.lightLux)} lux` : `${latest.light.toFixed(0)}%`
 
   const stats = [
-    { key: 'soil', label: 'Soil', value: `${latest.soil.toFixed(0)}%` },
+    { key: 'soil', label: 'Soil', value: `${((latest.soil / 4095) * 100).toFixed(1)}%` },
     { key: 'temp', label: 'Temp', value: `${latest.tempC.toFixed(1)}°C` },
     { key: 'humidity', label: 'Humidity', value: `${latest.humidity.toFixed(0)}%` },
     { key: 'light', label: 'Light', value: lightLabel },

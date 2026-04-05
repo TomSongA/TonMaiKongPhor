@@ -70,7 +70,7 @@ export default function DataTablePage() {
     <div className="page">
       <header className="page-head">
         <h1>Data table</h1>
-        <p className="page-desc">Rows from <code>/api/readings</code> for the selected date.</p>
+        <p className="page-desc">See every sensor reading captured on the date you pick.</p>
       </header>
 
       <div className="table-toolbar">

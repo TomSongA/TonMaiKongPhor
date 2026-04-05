@@ -2,8 +2,8 @@ import './PsiBar.css'
 
 export default function PsiBar({
   value,
-  label = 'Wellness index (0–100)',
-  hint = 'Derived from backend stress score: 100 − stress. Higher is better.',
+  label = 'Plant wellness score (0–100)',
+  hint = 'Higher numbers mean healthier plants. We will flag it if the score drops.',
 }) {
   const v = Math.round(Math.max(0, Math.min(100, value)))
   let tone = 'psi--good'

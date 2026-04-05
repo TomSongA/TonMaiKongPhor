@@ -4,6 +4,16 @@ import { useEffect, useState } from 'react'
 import { fetchReadingsRange } from '../lib/sensorApi'
 import './Page.css'
 
+const timeOptions = {
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+}
+
+function formatTime(at) {
+  return new Date(at).toLocaleTimeString('en-GB', timeOptions)
+}
+
 export default function DataTablePage() {
   const [dateStr, setDateStr] = useState(() => new Date().toISOString().slice(0, 10))
   const [rows, setRows] = useState([])
@@ -19,23 +29,28 @@ export default function DataTablePage() {
         const data = await fetchReadingsRange(dateStr, dateStr)
         if (cancelled) return
         setRows(
-          data.map((r, idx) => ({
-            id: r.id ?? idx + 1,
-            time: new Date(r.at).toLocaleString('en-GB', {
-              dateStyle: 'short',
-              timeStyle: 'medium',
-            }),
-            soil: r.soil.toFixed(1),
-            temp: r.tempC.toFixed(1),
-            humidity: r.humidity.toFixed(0),
-            light: r.lightLux != null ? String(Math.round(r.lightLux)) : r.light.toFixed(0),
-            lightUnit: r.lightLux != null ? 'lux' : 'scaled',
-            outdoorTemp: r.outdoor_temp != null ? r.outdoor_temp : '-',
-            outdoorHumidity: r.outdoor_humidity != null ? r.outdoor_humidity : '-',
-            rainProb: r.rain_probability != null ? r.rain_probability : '-',
-            psiScore: r.psiScore ?? '-',
-            psiLevel: r.psiLevel ?? '-', 
-          })),
+          data.map((r, idx) => {
+            const hasLux = r.lightLux != null
+            const lightReading = hasLux
+              ? String(Math.round(r.lightLux))
+              : r.light != null
+                ? r.light.toFixed(0)
+                : '-'
+
+            return {
+              id: r.id ?? idx + 1,
+              time: formatTime(r.at),
+              soil: r.soil.toFixed(1),
+              temp: r.tempC.toFixed(1),
+              humidity: r.humidity.toFixed(0),
+              light: lightReading,
+              outdoorTemp: r.outdoor_temp != null ? r.outdoor_temp : '-',
+              outdoorHumidity: r.outdoor_humidity != null ? r.outdoor_humidity : '-',
+              rainProb: r.rain_probability != null ? r.rain_probability : '-',
+              psiScore: r.psiScore ?? '-',
+              psiLevel: r.psiLevel ?? '-',
+            }
+          }),
         )
       } catch (e) {
         if (cancelled) return
@@ -55,7 +70,7 @@ export default function DataTablePage() {
     <div className="page">
       <header className="page-head">
         <h1>Data table</h1>
-        <p className="page-desc">Rows from <code>/api/readings</code> for the selected date.</p>
+        <p className="page-desc">See every sensor reading captured on the date you pick.</p>
       </header>
 
       <div className="table-toolbar">
@@ -77,7 +92,7 @@ export default function DataTablePage() {
               <th>soil (%)</th>
               <th>temp (°C)</th>
               <th>RH (%)</th>
-              <th>light</th>
+              <th>light (lux)</th>
               <th>outdoor temp</th>
               <th>outdoor RH</th>
               <th>rain %</th>
@@ -93,9 +108,7 @@ export default function DataTablePage() {
                 <td>{r.soil}</td>
                 <td>{r.temp}</td>
                 <td>{r.humidity}</td>
-                <td>
-                  {r.light} {r.lightUnit}
-                </td>
+                <td>{r.light}</td>
                 <td>{r.outdoorTemp}</td>
                 <td>{r.outdoorHumidity}</td>
                 <td>{r.rainProb}</td>

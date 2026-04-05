@@ -17,10 +17,11 @@ export default function DashboardPage() {
         <header className="page-head">
           <h1>Dashboard</h1>
         </header>
-        <p className="alert-bad-title">{error}</p>
+        <p className="alert-bad-title">We can't reach the sensor service right now.</p>
         <p className="page-foot">
-          Start the API (e.g. <code>uvicorn app.main:app --reload --port 8000</code> from <code>backend/</code>) and ensure{' '}
-          <code>NEXT_PUBLIC_API_URL</code> points to it (default <code>http://localhost:8000</code>).
+          Please make sure the sensor hub is online and try again shortly.
+          <br />
+          <span style={{ fontSize: '0.9em' }}>Details: {error}</span>
         </p>
       </div>
     )
@@ -40,14 +41,18 @@ export default function DashboardPage() {
           <span className="live-dot" aria-hidden />
           Latest update: <time dateTime={new Date(lastUpdated).toISOString()}>{lastStr}</time>
         </p>
-        {error && <p className="page-foot" style={{ color: 'var(--danger)' }}>{error}</p>}
+        {error && (
+          <p className="page-foot" style={{ color: 'var(--danger)' }}>
+            Data may be delayed: {error}
+          </p>
+        )}
       </header>
 
       <PsiBar value={psi} />
 
       <section aria-labelledby="sensors-heading">
         <h2 id="sensors-heading" className="section-title">
-          Real-time sensor
+          Live sensor overview
         </h2>
 
         <div className="realtime-grid">
@@ -73,7 +78,7 @@ export default function DashboardPage() {
               </ul>
             ) : (
               <p className="realtime-card__calm">
-                Latest reading is within the Healthy range (backend classification).
+                Latest reading looks healthy based on the most recent data.
               </p>
             )}
           </article>
@@ -81,13 +86,9 @@ export default function DashboardPage() {
           <article className="realtime-card realtime-card--chart">
             <div className="realtime-card__header">
               <h3>Live graph</h3>
-              <span className="realtime-card__hint">Today’s readings from API + poll every 10s</span>
+              <span className="realtime-card__hint">Shows today's readings, refreshed every 10 seconds.</span>
             </div>
-            {history.length === 0 ? (
-              <p className="page-foot">No points yet.</p>
-            ) : (
-              <MultiSensorChart history={history} />
-            )}
+            {history.length === 0 ? <p className="page-foot">Waiting for live readings…</p> : <MultiSensorChart history={history} />}
           </article>
         </div>
       </section>

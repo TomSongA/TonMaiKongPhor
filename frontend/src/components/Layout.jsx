@@ -48,7 +48,7 @@ export default function Layout({ children }) {
             ))}
           </nav>
           <p className="sidebar-foot">
-            API base: <code>NEXT_PUBLIC_API_URL</code> (see <code>.env.example</code>)
+            Sensor data powered by TomSongA.
           </p>
         </aside>
         <main className="main-panel">{children}</main>

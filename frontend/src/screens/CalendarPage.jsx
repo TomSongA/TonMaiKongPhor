@@ -120,7 +120,7 @@ export default function CalendarPage() {
       <header className="page-head">
         <h1>Data calendar</h1>
         <p className="page-desc">
-          Data from API <code>/api/readings</code>. Cell number is daily wellness (higher is better). Empty days show —.
+          Each day shows its wellness score (higher means happier plants). A dash means we didn't receive readings.
         </p>
       </header>
 

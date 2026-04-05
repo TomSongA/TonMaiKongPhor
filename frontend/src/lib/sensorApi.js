@@ -72,6 +72,13 @@ export async function fetchStressHistory() {
   return Array.isArray(data) ? data : []
 }
 
+export async function fetchPrediction(hoursAhead = 3) {
+  const { data } = await client().get('/api/predict', {
+    params: { hours_ahead: hoursAhead },
+  })
+  return data
+}
+
 /** Group API readings into calendar days; `psi` is wellness (100 − avg stress) for display. */
 export function buildCalendarMonth(year, month, mappedRows) {
   const last = new Date(year, month + 1, 0).getDate()

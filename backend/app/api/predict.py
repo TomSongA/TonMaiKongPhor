@@ -16,9 +16,10 @@ router = APIRouter(prefix="/api", tags=["Prediction"])
 
 
 # Load Model
-ML_DIR      = os.path.join(os.path.dirname(__file__), "../ml")
-MODEL_PATH  = os.path.join(ML_DIR, "model.pkl")
-SCALER_PATH = os.path.join(ML_DIR, "scaler.pkl")
+ML_DIR           = os.path.join(os.path.dirname(__file__), "../ml")
+MODEL_PATH       = os.path.join(ML_DIR, "model.pkl")
+CLASSIFIER_PATH  = os.path.join(ML_DIR, "classifier.pkl")
+SCALER_PATH      = os.path.join(ML_DIR, "scaler.pkl")
 
 
 def load_model():
@@ -28,15 +29,21 @@ def load_model():
             status_code=503,
             detail="ML model not trained yet. Run python -m app.ml.train first."
         )
+    if not os.path.exists(CLASSIFIER_PATH):
+        raise HTTPException(
+            status_code=503,
+            detail="ML classifier not trained yet. Run python -m app.ml.train first."
+        )
     if not os.path.exists(SCALER_PATH):
         raise HTTPException(
             status_code=503,
             detail="Scaler not found. Run python -m app.ml.train first."
         )
 
-    model  = joblib.load(MODEL_PATH)
-    scaler = joblib.load(SCALER_PATH)
-    return model, scaler
+    model      = joblib.load(MODEL_PATH)
+    classifier = joblib.load(CLASSIFIER_PATH)
+    scaler     = joblib.load(SCALER_PATH)
+    return model, classifier, scaler
 
 
 # Fallback: Linear Regression
@@ -105,9 +112,11 @@ def get_prediction(hours_ahead: int = 3, db: Session = Depends(get_db)):
 
     scores = [r.psi_score for r in readings]
 
+    predicted_level = None
+
     # Try ML model first
     try:
-        model, scaler = load_model()
+        model, classifier, scaler = load_model()
 
         # Use latest reading as input features
         latest  = readings[-1]
@@ -124,17 +133,19 @@ def get_prediction(hours_ahead: int = 3, db: Session = Depends(get_db)):
         }])
 
         X_scaled      = scaler.transform(X)
-        predicted_psi = float(model.predict(X_scaled)[0])
-        predicted_psi = round(max(0.0, min(100.0, predicted_psi)), 2)
-        method        = "ml"
+        predicted_psi   = float(model.predict(X_scaled)[0])
+        predicted_psi   = round(max(0.0, min(100.0, predicted_psi)), 2)
+        predicted_level = str(classifier.predict(X_scaled)[0])
+        method          = "ml"
 
     except HTTPException:
         # Fallback to linear regression
         predicted_psi = linear_regression_predict(scores, hours_ahead)
         method        = "linear_regression"
 
-    predicted_level = get_psi_level(predicted_psi)
-    confidence      = get_confidence(scores)
+    if not predicted_level:
+        predicted_level = get_psi_level(predicted_psi)
+    confidence = get_confidence(scores)
 
     # Lower confidence if using fallback
     if method == "linear_regression":
@@ -194,23 +205,32 @@ def get_trend(db: Session = Depends(get_db)):
 def get_model_info():
     """Returns info about the current ML model status."""
 
-    model_exists  = os.path.exists(MODEL_PATH)
-    scaler_exists = os.path.exists(SCALER_PATH)
+    model_exists      = os.path.exists(MODEL_PATH)
+    classifier_exists = os.path.exists(CLASSIFIER_PATH)
+    scaler_exists     = os.path.exists(SCALER_PATH)
 
-    if not model_exists or not scaler_exists:
+    if not (model_exists and classifier_exists and scaler_exists):
         return {
             "status":  "not_trained",
             "message": "Run python -m app.ml.train to train the model",
             "method":  "linear_regression_fallback"
         }
 
-    model_size = os.path.getsize(MODEL_PATH) / 1024
+    model_size       = os.path.getsize(MODEL_PATH) / 1024
+    classifier_size  = os.path.getsize(CLASSIFIER_PATH) / 1024
 
     return {
-        "status":       "ready",
-        "message":      "ML model is loaded and ready",
-        "method":       "random_forest",
-        "model_size_kb": round(model_size, 2),
-        "features":     ["soil", "temp", "humidity", "light", "hour"],
-        "model_path":   MODEL_PATH
+        "status":            "ready",
+        "message":           "ML model is loaded and ready",
+        "regression_model":  {
+            "method":        "random_forest_regressor",
+            "size_kb":       round(model_size, 2),
+            "path":          MODEL_PATH,
+        },
+        "classifier_model": {
+            "method":        "random_forest_classifier",
+            "size_kb":       round(classifier_size, 2),
+            "path":          CLASSIFIER_PATH,
+        },
+        "features":          ["soil", "temp", "humidity", "light", "hour"],
     }

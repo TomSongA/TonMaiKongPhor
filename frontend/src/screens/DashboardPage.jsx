@@ -4,7 +4,103 @@ import PsiBar from '../components/PsiBar'
 import MultiSensorChart from '../components/MultiSensorChart'
 import { useLiveSensors } from '../hooks/useLiveSensors'
 import { usePrediction } from '../hooks/usePrediction'
+import { evaluateStress, THRESHOLDS } from '../lib/sensorLogic'
 import './Page.css'
+
+function normalizeSoilValue(raw) {
+  if (raw == null || Number.isNaN(raw)) return null
+  return raw > 120 ? raw / 100 : raw
+}
+
+function formatSoilPercent(value) {
+  if (value == null || Number.isNaN(value)) return '-'
+  return value >= 10 ? value.toFixed(0) : value.toFixed(1)
+}
+
+function normalizeReadingForAdvice(reading) {
+  if (!reading) return null
+  return {
+    soil: normalizeSoilValue(reading.soil),
+    tempC: Number.isFinite(reading.tempC) ? reading.tempC : null,
+    humidity: Number.isFinite(reading.humidity) ? reading.humidity : null,
+    light: Number.isFinite(reading.light) ? Math.min(100, reading.light) : null,
+  }
+}
+
+const ACTION_HINTS = {
+  soil_low: (reading) =>
+    `Increase watering to raise soil moisture (currently ${formatSoilPercent(
+      reading.soil,
+    )}%, target ≥ ${THRESHOLDS.soil.min}%).`,
+  soil_high: (reading) =>
+    `Pause watering so soil can dry (currently ${formatSoilPercent(
+      reading.soil,
+    )}%, target ≤ ${THRESHOLDS.soil.max}%).`,
+  temp_low: (reading) =>
+    `Warm the area; temperature is ${reading.tempC?.toFixed(1) ?? '-'}°C, below ${THRESHOLDS.tempC.min}°C.`,
+  temp_high: (reading) =>
+    `Cool things down or add shade; temperature is ${reading.tempC?.toFixed(1) ?? '-'}°C, above ${THRESHOLDS.tempC.max}°C.`,
+  hum_low: (reading) =>
+    `Raise humidity with misting or a humidifier (currently ${reading.humidity?.toFixed(
+      0,
+    )}%, target ≥ ${THRESHOLDS.humidity.min}%).`,
+  hum_high: (reading) =>
+    `Improve airflow to lower humidity (currently ${reading.humidity?.toFixed(
+      0,
+    )}%, target ≤ ${THRESHOLDS.humidity.max}%).`,
+  light_low: (reading) =>
+    `Move the plant closer to light or extend grow lights (relative brightness ${reading.light?.toFixed(0) ?? '-'}% is low).`,
+  light_high: (reading) =>
+    `Add shade or dim lights (relative brightness ${reading.light?.toFixed(0) ?? '-'}% exceeds the safe range).`,
+}
+
+function getForecastAdvice(level, reading) {
+  const normalized = level ? level.toLowerCase() : 'unknown'
+  const summary = (() => {
+    if (!level) {
+      return {
+        title: 'Monitor conditions',
+        body: 'Prediction is unavailable. Keep an eye on the live readings and refresh shortly.',
+      }
+    }
+    if (normalized.includes('critical')) {
+      return {
+        title: 'Act now',
+        body: 'Stress is forecasted soon. Adjust watering, shading, and airflow immediately.',
+      }
+    }
+    if (normalized.includes('mild')) {
+      return {
+        title: 'Tune the environment',
+        body: 'Conditions may drift soon. Make small adjustments before stress escalates.',
+      }
+    }
+    if (normalized.includes('healthy')) {
+      return {
+        title: 'Keep steady',
+        body: 'Forecast is positive—maintain the current care routine.',
+      }
+    }
+    return {
+      title: 'Monitor conditions',
+      body: 'Prediction level is unknown. Watch live data and adjust if you see sudden drops.',
+    }
+  })()
+
+  const normalizedReading = normalizeReadingForAdvice(reading)
+  if (!normalizedReading) return { ...summary, actions: [] }
+
+  const factors = evaluateStress(normalizedReading)
+
+  const actions = factors
+    .map((reason) => {
+      const formatter = ACTION_HINTS[reason.key]
+      return formatter ? formatter(normalizedReading) : null
+    })
+    .filter(Boolean)
+
+  return { ...summary, actions }
+}
 
 export default function DashboardPage() {
   const sensors = useLiveSensors()
@@ -49,6 +145,7 @@ export default function DashboardPage() {
   const confidenceSlug = confidence.toLowerCase()
   const levelClass = `prediction-pill prediction-pill--${levelSlug}`
   const confidenceClass = `prediction-confidence prediction-confidence--${confidenceSlug}`
+  const forecastAdvice = getForecastAdvice(predictedLevel, reading)
 
   return (
     <div className="page">
@@ -166,6 +263,20 @@ export default function DashboardPage() {
                 Updated {prediction ? `~${prediction.hours_ahead}h ahead` : '—'}
               </span>
             </div>
+
+            {forecastAdvice && (
+              <div className="prediction-advice">
+                <strong>{forecastAdvice.title}</strong>
+                <p>{forecastAdvice.body}</p>
+                {forecastAdvice.actions?.length > 0 && (
+                  <ul>
+                    {forecastAdvice.actions.map((hint) => (
+                      <li key={hint}>{hint}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
           </div>
         </article>
       </section>

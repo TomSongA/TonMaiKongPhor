@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { fetchPrediction } from '../lib/sensorApi'
 
 export function usePrediction(initialHours = 3) {
@@ -6,22 +6,30 @@ export function usePrediction(initialHours = 3) {
   const [prediction, setPrediction] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const latestRequestId = useRef(0)
 
   const load = useCallback(
     async (hrs) => {
+      const requestId = ++latestRequestId.current
       setLoading(true)
       setError(null)
       try {
         const data = await fetchPrediction(hrs)
-        setPrediction(data)
-        if (typeof data?.hours_ahead === 'number') {
-          setHoursAhead(data.hours_ahead)
+        if (requestId === latestRequestId.current) {
+          setPrediction(data)
+          if (typeof data?.hours_ahead === 'number' && data.hours_ahead !== hrs) {
+            setHoursAhead(data.hours_ahead)
+          }
         }
       } catch (e) {
         const detail = e?.response?.data?.detail || e?.message || 'Failed to load prediction'
-        setError(detail)
+        if (requestId === latestRequestId.current) {
+          setError(detail)
+        }
       } finally {
-        setLoading(false)
+        if (requestId === latestRequestId.current) {
+          setLoading(false)
+        }
       }
     },
     []

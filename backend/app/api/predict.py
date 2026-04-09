@@ -12,6 +12,7 @@ from app.db.database import get_db
 from app.models.sensor import SensorReading
 from app.schemas.sensor import PredictionResponse
 from app.services.psi import get_psi_level
+from datetime import timezone
 
 router = APIRouter(prefix="/api", tags=["Prediction"])
 
@@ -153,15 +154,26 @@ def get_prediction(hours_ahead: int = 3, db: Session = Depends(get_db)):
         confidence = "low"
 
     # Save to DB
-    log = PredictionLog(
-        predicted_psi=predicted_psi,
-        predicted_level=predicted_level,
-        hours_ahead=hours_ahead,
-        confidence=confidence,
-        method=method,
-    )
-    db.add(log)
-    db.commit()
+    # ตรวจว่ามี prediction เดิมอยู่แล้วไหมใน 1 ชั่วโมงที่ผ่านมา
+    one_hour_ago = datetime.utcnow() - timedelta(hours=1)
+    existing = db.query(PredictionLog)\
+                .filter(
+                    PredictionLog.hours_ahead == hours_ahead,
+                    PredictionLog.predicted_psi == predicted_psi,
+                    PredictionLog.timestamp >= one_hour_ago
+                )\
+                .first()
+
+    if not existing:
+        log = PredictionLog(
+            predicted_psi=predicted_psi,
+            predicted_level=predicted_level,
+            hours_ahead=hours_ahead,
+            confidence=confidence,
+            method=method,
+        )
+        db.add(log)
+        db.commit()
 
     return PredictionResponse(
         predicted_psi=predicted_psi,

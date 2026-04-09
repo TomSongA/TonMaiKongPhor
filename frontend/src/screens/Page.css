@@ -205,13 +205,20 @@
 
 .prediction-card {
   background: var(--card-bg);
-  border: 2px solid var(--border-strong);
+  border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 28px;
+  padding: 24px;
   display: grid;
-  grid-template-columns: minmax(240px, 320px) minmax(0, 1fr);
-  gap: 32px;
-  align-items: center;
+  grid-template-columns: 280px 1fr;
+  gap: 20px;
+  align-items: stretch;
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transition: 0.2s ease;
+}
+
+.prediction-card:hover {
+  transform: translateY(-2px);
 }
 
 .prediction-metric {
@@ -645,7 +652,7 @@
   margin: 0 25px;
   overflow: auto;
   overflow-y: auto;
-  max-height: 60vh;
+  max-height: 55.5vh;
   padding: 0;
 }
 

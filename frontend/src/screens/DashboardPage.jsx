@@ -207,7 +207,7 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      <section aria-labelledby="prediction-heading" className="prediction-section">
+      {/* <section aria-labelledby="prediction-heading" className="prediction-section">
         <h2 id="prediction-heading" className="section-title">
           Prediction
         </h2>
@@ -279,7 +279,7 @@ export default function DashboardPage() {
             )}
           </div>
         </article>
-      </section>
+      </section> */}
     </div>
   )
 }

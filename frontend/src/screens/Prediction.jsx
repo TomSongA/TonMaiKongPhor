@@ -274,10 +274,11 @@ export default function PredictionSection({ reading, history, initialHours = 3 }
   const forecastAdvice = getForecastAdvice(predictedLevel, reading)
 
   return (
-    <section aria-labelledby="prediction-heading" className="prediction-section">
-      <h2 id="prediction-heading" className="section-title">
-        Prediction
-      </h2>
+    <div className="page">
+      <header className="page-head">
+        <h1 id="prediction-heading">Prediction</h1>
+        <p className="page-desc">See the forecasted plant stress level for the next 1–12 hours.</p>
+      </header>
 
       {/* ── PSI History Chart ── */}
       <article className="realtime-card realtime-card--chart" style={{ marginBottom: '1.25rem' }}>
@@ -359,6 +360,6 @@ export default function PredictionSection({ reading, history, initialHours = 3 }
           )}
         </div>
       </article>
-    </section>
+    </div>
   )
 }

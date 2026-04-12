@@ -110,3 +110,8 @@ export function buildCalendarMonth(year, month, mappedRows) {
   }
   return { year, month, days }
 }
+
+export async function fetchBestWaterTime() {
+  const { data } = await client().get('/api/best-water-time')
+  return data
+}

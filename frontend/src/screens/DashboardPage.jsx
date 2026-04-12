@@ -5,6 +5,8 @@ import MultiSensorChart from '../components/MultiSensorChart'
 import { useLiveSensors } from '../hooks/useLiveSensors'
 import { usePrediction } from '../hooks/usePrediction'
 import { evaluateStress, THRESHOLDS } from '../lib/sensorLogic'
+import { fetchBestWaterTime } from '../lib/sensorApi'
+import { useEffect, useState } from 'react'
 import './Page.css'
 
 function normalizeSoilValue(raw) {
@@ -113,6 +115,14 @@ export default function DashboardPage() {
     refresh: refreshPrediction,
   } = usePrediction(3)
 
+  const [waterTime, setWaterTime] = useState(null)
+
+  useEffect(() => {
+    fetchBestWaterTime()
+      .then(setWaterTime)
+      .catch(() => {})
+  }, [])
+
   if (!sensors) return null
 
   const { history, lastUpdated, psi, stressReasons, error, reading } = sensors
@@ -207,79 +217,22 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* <section aria-labelledby="prediction-heading" className="prediction-section">
-        <h2 id="prediction-heading" className="section-title">
-          Prediction
-        </h2>
-
-        <article className="prediction-card">
-          <div className="prediction-metric">
-            <p className="prediction-label">Next {hoursAhead} hours</p>
-            <div className="prediction-values">
-              <strong className="prediction-psi">{predictedPsi}</strong>
-              <span className={levelClass}>{predictedLevel}</span>
-            </div>
-            <p className={confidenceClass}>
-              Confidence: <strong>{confidence}</strong>
+      {waterTime && (
+        <article className="realtime-card" style={{ maxWidth: '100%', flexDirection: 'row', alignItems: 'center', gap: 32, padding: '14px 24px' }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: 18, color: 'var(--text-muted)' }}>Best time to water today</h3>
+            <p style={{ fontSize: 36, fontWeight: 600, color: 'var(--accent)', margin: 15 }}>
+              {waterTime.best_time}
             </p>
           </div>
-
-          <div className="prediction-panel">
-            <div className="prediction-state">
-              {predictionLoading && <p className="prediction-hint">Fetching forecast…</p>}
-              {!predictionLoading && predictionError && (
-                <p className="alert-bad-title prediction-hint">{predictionError}</p>
-              )}
-              {!predictionLoading && !predictionError && prediction && (
-                <p className="prediction-hint">
-                  Forecast runs on Random Forest (classifier + regressor) trained on labeled PSI levels.
-                </p>
-              )}
-            </div>
-
-            <label className="prediction-control">
-              <span>
-                Forecast window <strong>{hoursAhead}h</strong>
-              </span>
-              <input
-                type="range"
-                min="1"
-                max="12"
-                value={hoursAhead}
-                onChange={(e) => setHoursAhead(Number(e.target.value))}
-              />
-            </label>
-
-            <div className="prediction-actions">
-              <button
-                type="button"
-                className="btn-ghost"
-                onClick={refreshPrediction}
-                disabled={predictionLoading}
-              >
-                Refresh now
-              </button>
-              <span className="prediction-updated">
-                Updated {prediction ? `~${prediction.hours_ahead}h ahead` : '—'}
-              </span>
-            </div>
-
-            {forecastAdvice && (
-              <div className="prediction-advice">
-                <strong>{forecastAdvice.title}</strong>
-                <p>{forecastAdvice.body}</p>
-                {forecastAdvice.actions?.length > 0 && (
-                  <ul>
-                    {forecastAdvice.actions.map((hint) => (
-                      <li key={hint}>{hint}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )}
-          </div>
+          <p style={{ fontSize: 16, color: 'var(--text-muted)', margin: '20px 60px 0', flex: 1 }}>
+            {waterTime.reason}
+          </p>
+          <p style={{ fontSize: 16, color: 'var(--text-muted)', margin: '20px 60px 0', whiteSpace: 'nowrap' }}>
+            PSI at that time: {waterTime.psi_at_time.toFixed(1)}
+          </p>
         </article>
-      </section> */}
+      )}
     </div>
   )
 }

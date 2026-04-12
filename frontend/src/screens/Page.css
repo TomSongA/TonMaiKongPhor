@@ -618,10 +618,92 @@
 }
 
 /* ===== Table page ===== */
+.tonmai-calendar {
+  font-family: inherit !important;
+  border: 2px solid var(--border-strong) !important;
+  border-radius: 16px !important;
+  background: var(--card-bg) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08) !important;
+  padding: 8px !important;
+}
+
+.tonmai-calendar .react-datepicker__header {
+  background: var(--card-bg) !important;
+  border-bottom: 1px solid var(--border) !important;
+  border-radius: 12px 12px 0 0 !important;
+}
+
+.tonmai-calendar .react-datepicker__current-month {
+  color: var(--text-h) !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+}
+
+.tonmai-calendar .react-datepicker__day-name {
+  color: var(--text-muted) !important;
+  font-weight: 600 !important;
+}
+
+.tonmai-calendar .react-datepicker__day {
+  color: var(--text-h) !important;
+  border-radius: 50% !important;
+}
+
+.tonmai-calendar .react-datepicker__day:hover {
+  background: var(--ok-soft) !important;
+  color: var(--ok-text) !important;
+}
+
+.tonmai-calendar .react-datepicker__day--selected {
+  background: var(--accent) !important;
+  color: #fff !important;
+}
+
+.tonmai-calendar .react-datepicker__day--today {
+  font-weight: 700 !important;
+  border: 1px solid var(--accent) !important;
+  background: transparent !important;
+}
+
+.tonmai-calendar .react-datepicker__navigation-icon::before {
+  border-color: var(--text-muted) !important;
+}
+
+.react-datepicker__input-container input {
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 20px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.react-datepicker-popper {
+  z-index: 100 !important;
+}
 
 .table-toolbar {
   margin: 0 25px 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+
+.tonmai-calendar .react-datepicker__day--selected,
+.tonmai-calendar .react-datepicker__day--selected:hover {
+  background-color: var(--accent) !important;
+  color: white !important;
+  border-radius: 50% !important;
+}
+
+.tonmai-calendar .react-datepicker__day--keyboard-selected {
+  background-color: var(--accent) !important;
+  color: white !important;
+  border-radius: 50% !important;
+}
+
 
 .field-inline {
   padding: 12px 22px;

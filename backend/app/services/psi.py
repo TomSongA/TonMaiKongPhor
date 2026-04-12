@@ -12,12 +12,12 @@ def score_soil(soil: float) -> float:
         return 100.0
     elif soil < 30:
         return 70.0
-    elif soil <= 70:
+    elif soil <= 65:      # tighten the healthy range
         return 0.0
-    elif soil <= 80:
-        return 30.0
+    elif soil <= 75:
+        return 50.0       # raise penalty
     else:
-        return 60.0
+        return 85.0       # raise penalty for severe overwatering
 
 
 def score_temp(temp: float) -> float:

@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -11,10 +12,24 @@ from app.api.weather import router as weather_router
 import threading
 from app.core.mqtt_listener import start_mqtt_listener
 
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    init_db()
+    print("Database initialized")
+    thread = threading.Thread(target=start_mqtt_listener, daemon=True)
+    thread.start()
+    print("MQTT listener started")
+    print("TonMaiKongPhor API is ready")
+    yield  # app runs here
+
+
 app = FastAPI(
     title="TonMaiKongPhor API",
     description="Plant Stress Early Warning System",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # CORS
@@ -29,19 +44,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Database
-@app.on_event("startup")
-def on_startup():
-    init_db()
-    print("✅ Database initialized")
-    
-    # Start MQTT in background thread
-    thread = threading.Thread(target=start_mqtt_listener, daemon=True)
-    thread.start()
-    print("✅ MQTT listener started")
-    
-    print("✅ TonMaiKongPhor API is ready")
 
 # Routers
 app.include_router(sensor_router)

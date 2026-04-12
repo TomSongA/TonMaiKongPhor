@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
@@ -16,6 +16,8 @@ class FactorBreakdown(BaseModel):
 
 
 class SensorResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
     soil: float
     temp: float
@@ -26,9 +28,6 @@ class SensorResponse(BaseModel):
     explanation: str
     breakdown: FactorBreakdown
     timestamp: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class StressStatusResponse(BaseModel):
@@ -53,6 +52,7 @@ class HistoryPoint(BaseModel):
 
 class ReadingRow(BaseModel):
     """Single stored sensor row (for charts / tables)."""
+    model_config = ConfigDict(from_attributes=True)
 
     id: int
     soil: float
@@ -65,9 +65,6 @@ class ReadingRow(BaseModel):
     psi_score: float
     psi_level: str
     timestamp: datetime
-
-    class Config:
-        from_attributes = True
 
 
 class PredictionResponse(BaseModel):

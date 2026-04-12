@@ -76,7 +76,6 @@ class PSIResult:
     breakdown: dict
 
 def calculate_psi(soil, temp, humidity, light) -> PSIResult:
-    # แปลง raw ADC (0-4095) -> % (0-100) ค่าสูง = แห้ง
     soil_pct = round((soil / 4095) * 100, 1)
 
     soil_score  = score_soil(soil_pct)
@@ -117,7 +116,7 @@ def build_explanation(
     issues = []
 
     if soil_score >= 70:
-        issues.append(f"soil is too dry ({soil:.0f}%)" if soil < 30 else f"soil is too wet ({soil:.0f}%)")
+        issues.append(f"soil is too wet ({soil:.0f}%)" if soil < 30 else f"soil is too dry ({soil:.0f}%)")
     elif soil_score >= 30:
         issues.append(f"soil moisture is slightly off ({soil:.0f}%)")
 

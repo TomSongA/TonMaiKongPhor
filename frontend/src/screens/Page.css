@@ -2,19 +2,19 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 20px;
 }
 
 .page h1 {
-  margin: 0 0 18px;
-  font-size: 46px;
+  margin: 0 0 10px;
+  font-size: 36px;
   letter-spacing: -0.05em;
   color: var(--text-h);
 }
 
 .page-head {
-  margin-bottom: 20px;
-  padding-bottom: 16px;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
   border-bottom: 2px solid var(--border-strong);
 }
 
@@ -27,8 +27,8 @@
 }
 
 .page-meta {
-  margin: 16px 0 0;
-  font-size: 24px;
+  margin: 10px 0 0;
+  font-size: 20px;
   color: var(--text-muted);
   display: flex;
   align-items: center;
@@ -51,11 +51,11 @@
 }
 
 .section-title {
-  font-size: 30px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--text-h);
-  margin: 0 0 18px;
-  padding-bottom: 8px;
+  margin: 0 0 12px;
+  padding-bottom: 6px;
   border-bottom: 2px solid var(--border-strong);
 }
 
@@ -74,8 +74,8 @@
 
 .realtime-grid {
   display: grid;
-  grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
-  gap: 24px;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 20px;
   align-items: stretch;
 }
 
@@ -83,10 +83,10 @@
   background: var(--card-bg);
   border: 2px solid var(--border-strong);
   border-radius: 20px;
-  padding: 24px 28px;
+  padding: 18px 22px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .realtime-card__header {
@@ -98,7 +98,7 @@
 
 .realtime-card__header h3 {
   margin: 0;
-  font-size: 28px;
+  font-size: 22px;
   color: var(--text-h);
 }
 
@@ -190,7 +190,7 @@
   padding: 12px;
   background: var(--card-bg);
   flex: 1;
-  min-height: 340px;
+  min-height: 260px;
 }
 
 .realtime-card--chart {
@@ -426,9 +426,6 @@
   align-items: start;
 }
 
-.cal-left {
-  /* no extra style needed — toolbar + grid sit here */
-}
 
 .cal-right {
   position: sticky;

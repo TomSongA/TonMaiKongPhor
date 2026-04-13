@@ -17,7 +17,7 @@ def score_soil(soil: float) -> float:
     elif soil <= 75:
         return 50.0       # raise penalty
     else:
-        return 85.0       # raise penalty for severe overwatering
+        return 100.0  # critically dry (soil=100% = bone dry)
 
 
 def score_temp(temp: float) -> float:
@@ -57,7 +57,7 @@ def score_light(light: float) -> float:
 # Level Classification
 
 def get_psi_level(psi_score: float) -> str:
-    if psi_score <= 40:
+    if psi_score < 40:
         return "Healthy"
     elif psi_score <= 70:
         return "Mild Stress"

@@ -2,8 +2,6 @@ import json
 import time
 import asyncio
 import paho.mqtt.client as mqtt
-import nest_asyncio
-nest_asyncio.apply()
 
 from app.core.config import settings
 from app.db.database import SessionLocal, init_db
@@ -40,9 +38,10 @@ def on_message(client, userdata, msg):
         # Fetch weather (sync wrapper around async function)
         # weather = asyncio.run(get_weather())
         try:
-            loop = asyncio.get_event_loop()
+            loop = asyncio.new_event_loop()
             weather = loop.run_until_complete(get_weather())
-        except RuntimeError:
+            loop.close()
+        except Exception:
             weather = None
 
         db = SessionLocal()

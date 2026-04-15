@@ -4,20 +4,24 @@ from dataclasses import dataclass
 # Per-Factor Scoring
 
 def score_soil(soil: float) -> float:
-    """
-    Soil moisture 0-100%.
-    Stress = too dry (below 30) or too wet (above 80).
-    """
     if soil < 20:
         return 100.0
     elif soil < 30:
-        return 70.0
-    elif soil <= 65:      # tighten the healthy range
-        return 0.0
+        return 70.0   # slightly wet
+    elif soil < 40:
+        return 50.0   # borderline
+    elif soil < 55:
+        return 25.0   # borderline
+    elif soil <= 65:
+        return 0.0    # healthy
     elif soil <= 75:
-        return 50.0       # raise penalty
+        return 25.0   # slightly dry
+    elif soil <= 85:
+        return 50.0   # dry
+    elif soil <= 95:
+        return 75.0   # very dry
     else:
-        return 100.0  # critically dry (soil=100% = bone dry)
+        return 100.0  # bone dry
 
 
 def score_temp(temp: float) -> float:
@@ -34,7 +38,7 @@ def score_temp(temp: float) -> float:
     elif temp <= 40:
         return 40.0
     else:
-        return 85.0 
+        return 100.0
 
 
 def score_light(light: float) -> float:
@@ -43,21 +47,21 @@ def score_light(light: float) -> float:
     Too dark or too bright both cause stress.
     """
     if light < 500:
-        return 80.0
+        return 100.0
     elif light < 1000:
-        return 30.0
+        return 50.0
     elif light <= 50000:
         return 0.0
     elif light <= 80000:
         return 35.0
     else:
-        return 75.0  
+        return 100.0  
 
 
 # Level Classification
 
 def get_psi_level(psi_score: float) -> str:
-    if psi_score < 40:
+    if psi_score <= 40:
         return "Healthy"
     elif psi_score <= 70:
         return "Mild Stress"
@@ -77,6 +81,7 @@ class PSIResult:
 
 def calculate_psi(soil, temp, humidity, light) -> PSIResult:
     soil_pct = round((soil / 4095) * 100, 1)
+    #soil_pct = soil
 
     soil_score  = score_soil(soil_pct)
     temp_score  = score_temp(temp)
@@ -121,9 +126,9 @@ def build_explanation(
         issues.append(f"soil moisture is slightly off ({soil:.0f}%)")
 
     if temp_score >= 70:
-        issues.append(f"temperature is too {'cold' if temp < 18 else 'hot'} ({temp:.1f}°C)")
+        issues.append(f"temperature is too {'cold' if temp < 22 else 'hot'} ({temp:.1f}°C)")
     elif temp_score >= 30:
-        issues.append(f"temperature is slightly {'low' if temp < 18 else 'high'} ({temp:.1f}°C)")
+        issues.append(f"temperature is slightly {'low' if temp < 22 else 'high'} ({temp:.1f}°C)")
 
     if light_score >= 70:
         issues.append(f"light is too {'dim' if light < 1000 else 'bright'} ({light:.0f} lux)")

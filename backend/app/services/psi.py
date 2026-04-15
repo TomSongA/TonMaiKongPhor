@@ -58,6 +58,27 @@ def score_light(light: float) -> float:
         return 100.0  
 
 
+def score_humidity(humidity: float) -> float:
+    """
+    Humidity in % (0-100).
+    Too dry or too humid both cause stress.
+    """
+    if humidity < 30:
+        return 100.0  # critically dry
+    elif humidity < 40:
+        return 70.0   # very dry
+    elif humidity < 50:
+        return 40.0   # dry
+    elif humidity <= 70:
+        return 0.0    # healthy
+    elif humidity <= 80:
+        return 30.0   # slightly humid
+    elif humidity <= 90:
+        return 60.0   # humid
+    else:
+        return 100.0  # critically humid
+
+
 # Level Classification
 
 def get_psi_level(psi_score: float) -> str:
@@ -83,26 +104,29 @@ def calculate_psi(soil, temp, humidity, light) -> PSIResult:
     soil_pct = round((soil / 4095) * 100, 1)
     #soil_pct = soil
 
-    soil_score  = score_soil(soil_pct)
-    temp_score  = score_temp(temp)
-    light_score = score_light(light)
+    soil_score    = score_soil(soil_pct)
+    temp_score    = score_temp(temp)
+    humidity_score = score_humidity(humidity)
+    light_score   = score_light(light)
 
     psi_score = round(
-        (soil_score  * settings.PSI_WEIGHT_SOIL) +
-        (temp_score  * settings.PSI_WEIGHT_TEMP) +
-        (light_score * settings.PSI_WEIGHT_LIGHT),
+        (soil_score     * settings.PSI_WEIGHT_SOIL) +
+        (temp_score     * settings.PSI_WEIGHT_TEMP) +
+        (humidity_score * settings.PSI_WEIGHT_HUMIDITY) +
+        (light_score    * settings.PSI_WEIGHT_LIGHT),
         2
     )
 
     return PSIResult(
         psi_score   = psi_score,
         psi_level   = get_psi_level(psi_score),
-        explanation = build_explanation(soil_pct, temp, humidity, light, soil_score, temp_score, light_score),  # แก้ soil → soil_pct
-        advice      = build_advice(soil_score, temp_score, light_score, get_psi_level(psi_score)),
+        explanation = build_explanation(soil_pct, temp, humidity, light, soil_score, temp_score, humidity_score, light_score, get_psi_level(psi_score)),
+        advice      = build_advice(soil_score, temp_score, humidity_score, light_score, get_psi_level(psi_score)),
         breakdown   = {
-            "soil_score":  soil_score,
-            "temp_score":  temp_score,
-            "light_score": light_score,
+            "soil_score":     soil_score,
+            "temp_score":     temp_score,
+            "humidity_score": humidity_score,
+            "light_score":    light_score,
         }
     )
 
@@ -116,12 +140,17 @@ def build_explanation(
     light: float,
     soil_score: float,
     temp_score: float,
-    light_score: float
+    humidity_score: float,
+    light_score: float,
+    psi_level: str
 ) -> str:
+    if psi_level == "Healthy":
+        return "All conditions are within healthy ranges."
+
     issues = []
 
     if soil_score >= 70:
-        issues.append(f"soil is too wet ({soil:.0f}%)" if soil < 30 else f"soil is too dry ({soil:.0f}%)")
+        issues.append(f"soil is too dry ({soil:.0f}%)" if soil < 30 else f"soil is too wet ({soil:.0f}%)")
     elif soil_score >= 30:
         issues.append(f"soil moisture is slightly off ({soil:.0f}%)")
 
@@ -130,15 +159,15 @@ def build_explanation(
     elif temp_score >= 30:
         issues.append(f"temperature is slightly {'low' if temp < 22 else 'high'} ({temp:.1f}°C)")
 
+    if humidity_score >= 70:
+        issues.append(f"humidity is too {'dry' if humidity < 50 else 'humid'} ({humidity:.0f}%)")
+    elif humidity_score >= 30:
+        issues.append(f"humidity is slightly {'low' if humidity < 50 else 'high'} ({humidity:.0f}%)")
+
     if light_score >= 70:
         issues.append(f"light is too {'dim' if light < 1000 else 'bright'} ({light:.0f} lux)")
     elif light_score >= 30:
         issues.append(f"light level is slightly off ({light:.0f} lux)")
-
-    if humidity < 40:
-        issues.append(f"air humidity is very low ({humidity:.0f}%)")
-    elif humidity > 90:
-        issues.append(f"air humidity is very high ({humidity:.0f}%)")
 
     if not issues:
         return "All conditions are within healthy ranges."
@@ -151,6 +180,7 @@ def build_explanation(
 def build_advice(
     soil_score: float,
     temp_score: float,
+    humidity_score: float,
     light_score: float,
     psi_level: str
 ) -> str:
@@ -163,6 +193,8 @@ def build_advice(
         advice.append("water immediately" if soil_score == 100 else "check soil moisture soon")
     if temp_score >= 50:
         advice.append("move plant to a cooler/warmer spot")
+    if humidity_score >= 50:
+        advice.append("adjust humidity levels (use humidifier/dehumidifier)")
     if light_score >= 70:
         advice.append("adjust lighting or move away from direct sun")
 

@@ -104,6 +104,23 @@ function getForecastAdvice(level, reading) {
   return { ...summary, actions }
 }
 
+// function for '13:00' to '1:00 PM'
+function formatTimeTo12hr(timeStr) {
+  if (!timeStr) return '-';
+  
+  // create trick Date object for use ability of Intl.DateTimeFormat
+  const [hours, minutes] = timeStr.split(':');
+  const date = new Date();
+  date.setHours(parseInt(hours, 10));
+  date.setMinutes(parseInt(minutes, 10));
+
+  return date.toLocaleString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+
 export default function DashboardPage() {
   const sensors = useLiveSensors()
   const {
@@ -222,7 +239,7 @@ export default function DashboardPage() {
           <div>
             <h3 style={{ margin: 0, fontSize: 18, color: 'var(--text-muted)' }}>Best time to water today</h3>
             <p style={{ fontSize: 36, fontWeight: 600, color: 'var(--accent)', margin: 15 }}>
-              {waterTime.best_time}
+              {formatTimeTo12hr(waterTime.best_time)}
             </p>
           </div>
           <p style={{ fontSize: 16, color: 'var(--text-muted)', margin: '20px 60px 0', flex: 1 }}>

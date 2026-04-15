@@ -11,8 +11,9 @@ class Settings(BaseSettings):
     MQTT_TOPIC: str = "tonmaikongphor/sensors"
     OPENWEATHER_API_KEY: str = ""
     PSI_WEIGHT_SOIL: float = 0.40
-    PSI_WEIGHT_TEMP: float = 0.35
-    PSI_WEIGHT_LIGHT: float = 0.25
+    PSI_WEIGHT_TEMP: float = 0.15
+    PSI_WEIGHT_HUMIDITY: float = 0.15
+    PSI_WEIGHT_LIGHT: float = 0.30
     DB_USER: str = ""
     DB_PASS: str = ""
     DB_HOST: str = "iot.cpe.ku.ac.th"

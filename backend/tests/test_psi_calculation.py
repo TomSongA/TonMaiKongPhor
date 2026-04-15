@@ -27,10 +27,11 @@ class TestPsiCalculation:
         r = calculate_psi(soil=50, temp=28, humidity=70, light=15000)
         assert 0 <= r.psi_score <= 100
 
-    def test_breakdown_has_three_factors(self):
+    def test_breakdown_has_four_factors(self):
         r = calculate_psi(soil=50, temp=28, humidity=70, light=15000)
         assert "soil_score" in r.breakdown
         assert "temp_score" in r.breakdown
+        assert "humidity_score" in r.breakdown
         assert "light_score" in r.breakdown
 
     def test_explanation_present_on_stress(self):

@@ -2,6 +2,7 @@
 
 import PsiBar from '../components/PsiBar'
 import MultiSensorChart from '../components/MultiSensorChart'
+import StressWeekTrend from '../components/StressWeekTrend'
 import { useLiveSensors } from '../hooks/useLiveSensors'
 import { usePrediction } from '../hooks/usePrediction'
 import { evaluateStress, THRESHOLDS } from '../lib/sensorLogic'
@@ -250,6 +251,8 @@ export default function DashboardPage() {
           </p>
         </article>
       )}
+
+      <StressWeekTrend />
     </div>
   )
 }

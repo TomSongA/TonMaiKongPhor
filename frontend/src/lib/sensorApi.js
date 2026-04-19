@@ -72,6 +72,11 @@ export async function fetchStressHistory() {
   return Array.isArray(data) ? data : []
 }
 
+export async function fetchStressHistorySummary() {
+  const { data } = await client().get('/api/stress-history/summary')
+  return data
+}
+
 export async function fetchPrediction(hoursAhead = 3) {
   const { data } = await client().get('/api/predict', {
     params: { hours_ahead: hoursAhead },

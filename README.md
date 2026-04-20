@@ -139,14 +139,12 @@ The **Plant Stress Index** is calculated from four sensor inputs using a weighte
 
 ## Pages
 
-| Route       | Page       | Description                                             |
-| ----------- | ---------- | ------------------------------------------------------- |
-| `/`         | Dashboard  | Live PSI gauge, sensor cards, real-time chart, alerts   |
-| `/calendar` | Calendar   | Daily PSI wellness history by date                      |
-| `/data`     | Data Table | Browse and filter all historical readings by date range |
-| `/predict`  | Prediction | Predicted PSI trend for the next 1–12 hours             |
-
----
+| Route            | Page          | Description                                                                 |
+| ---------------- | ------------- | --------------------------------------------------------------------------- |
+| `/`              | Dashboard     | Plant wellness score, live sensor cards, real-time chart, watering time, and 7-day stress trend |
+| `/calendar`      | Calendar      | Daily PSI wellness history by date                                          |
+| `/data`          | Data Table    | Browse and filter all historical readings by date range                     |
+| `/predict`       | Prediction    | Predicted PSI trend for the next 1–12 hours                                 |
 
 ## Environment Variables
 

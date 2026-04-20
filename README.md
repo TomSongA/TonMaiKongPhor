@@ -14,7 +14,7 @@
 | **MQTT**     | HiveMQ (free cloud broker) + paho-mqtt                                  |
 | **Weather**  | Open-Meteo API (free, no key needed) + OpenWeatherMap                   |
 | **ML**       | Scikit-learn (Random Forest classifier + regressor)                     |
-| **Frontend** | Next.js (App Router), React, TailwindCSS                                |
+| **Frontend** | Next.js (App Router), React, Vite, TailwindCSS                          |
 | **Hardware** | KidBright32 with soil moisture, temperature/humidity, and light sensors |
 
 ---
@@ -37,10 +37,13 @@ TonMaiKongPhor/
 │   └── .env.example
 ├── frontend/
 │   └── src/
-│       ├── app/            # Next.js App Router pages (/, /calendar, /data)
-│       ├── components/     # Reusable UI (Layout, charts, sensor cards)
-│       ├── screens/        # Page-level components (Dashboard, Calendar, DataTable)
-│       └── lib/            # API client (sensorApi.js)
+│       ├── components/     # Reusable UI (CircleGauge, SensorCard, MultiSensorChart, etc.)
+│       ├── hooks/          # Custom hooks (useLiveSensors, usePrediction)
+│       ├── lib/            # API client (sensorApi.js) + logic (sensorLogic.js)
+│       └── screens/        # Page-level components (Dashboard, Calendar, DataTable,
+│                           #   Notifications, Prediction)
+├── microcontroller(thonny)/
+│   └── main.py             # MicroPython script for KidBright32 (runs in Thonny IDE)
 ├── .gitignore
 └── README.md
 ```
@@ -141,6 +144,7 @@ The **Plant Stress Index** is calculated from four sensor inputs using a weighte
 | `/`         | Dashboard  | Live PSI gauge, sensor cards, real-time chart, alerts   |
 | `/calendar` | Calendar   | Daily PSI wellness history by date                      |
 | `/data`     | Data Table | Browse and filter all historical readings by date range |
+| `/predict`  | Prediction | Predicted PSI trend for the next 1–12 hours             |
 
 ---
 
@@ -167,3 +171,30 @@ DB_NAME=your_student_id
 > Credentials are issued per student by the CPE department.
 
 `NEXT_PUBLIC_API_URL` can be set in `frontend/.env.local` to point the frontend at a non-default backend address (default: `http://localhost:8000`).
+
+## Microcontroller
+
+The `microcontroller(thonny)/` folder contains the MicroPython script 
+that runs directly on the **KidBright32** board using the Thonny IDE.
+
+### What it does
+- Reads sensor data (soil moisture, temperature/humidity, light intensity)
+  every 15 minutes
+- Publishes readings as JSON payload to the MQTT broker via Wi-Fi
+
+### How to flash
+1. Open **Thonny IDE** and connect the KidBright32 board via USB
+2. Set the interpreter to **MicroPython (ESP32)**
+3. Open `microcontroller(thonny)/main.py`
+4. Edit the Wi-Fi credentials and MQTT broker settings at the top of the file
+5. Run or save to device as `main.py`
+
+### MQTT Payload format
+```json
+{
+  "soil": 45,
+  "temperature": 28.5,
+  "humidity": 65.2,
+  "light": 320
+}
+```

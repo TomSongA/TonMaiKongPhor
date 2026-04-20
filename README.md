@@ -27,7 +27,7 @@ TonMaiKongPhor/
 │   ├── app/
 │   │   ├── api/            # Route handlers (sensor, history, predict, weather, water_time)
 │   │   ├── core/           # Config & MQTT listener
-│   │   ├── db/             # Database setup (SQLite)
+│   │   ├── db/             # Database setup (MySQL)
 │   │   ├── models/         # SQLAlchemy table definitions
 │   │   ├── schemas/        # Pydantic request/response models
 │   │   ├── services/       # PSI calculation + weather service

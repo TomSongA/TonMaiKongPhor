@@ -5,6 +5,20 @@
 
 ---
 
+## members
+
+- 6710545679 Nisara Ploysuttipol
+- 6710545792 Patthiaon Panitanont
+
+**Affiliation:** Department of Computer Engineering, Faculty of Engineering, Kasetsart University (Software and Knowledge Engineering).
+
+## Video Presentation
+
+For DAQ: https://youtu.be/I2N3le4pCPg?si=7ceooaL2u0Vs6q74
+
+## Link to GitHub repository
+https://github.com/TomSongA/TonMaiKongPhor
+
 ## Tech Stack
 
 | Layer        | Technology                                                              |
@@ -196,3 +210,14 @@ that runs directly on the **KidBright32** board using the Thonny IDE.
   "light": 320
 }
 ```
+
+## Database schema
+
+![alt text](image.png)
+
+If you want to use data from https://iot.cpe.ku.ac.th/pma/. 
+Use b6710545792 account
+
+## SQL schema files used in this project:
+- `database/prediction_logs.sql`
+- `database/sensor_readings.sql`

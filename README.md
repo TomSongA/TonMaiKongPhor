@@ -217,7 +217,7 @@ that runs directly on the **KidBright32** board using the Thonny IDE.
 
 ## Database schema
 
-![alt text](image.png)
+![alt text](database/schema.png)
 
 If you want to use data from https://iot.cpe.ku.ac.th/pma/.
 Use b6710545792 account

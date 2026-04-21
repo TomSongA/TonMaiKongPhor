@@ -17,6 +17,7 @@
 For DAQ: https://youtu.be/I2N3le4pCPg?si=7ceooaL2u0Vs6q74
 
 ## Link to GitHub repository
+
 https://github.com/TomSongA/TonMaiKongPhor
 
 ## Tech Stack
@@ -153,12 +154,12 @@ The **Plant Stress Index** is calculated from four sensor inputs using a weighte
 
 ## Pages
 
-| Route            | Page          | Description                                                                 |
-| ---------------- | ------------- | --------------------------------------------------------------------------- |
-| `/`              | Dashboard     | Plant wellness score, live sensor cards, real-time chart, watering time, and 7-day stress trend |
-| `/calendar`      | Calendar      | Daily PSI wellness history by date                                          |
-| `/data`          | Data Table    | Browse and filter all historical readings by date range                     |
-| `/predict`       | Prediction    | Predicted PSI trend for the next 1–12 hours                                 |
+| Route       | Page       | Description                                                                                     |
+| ----------- | ---------- | ----------------------------------------------------------------------------------------------- |
+| `/`         | Dashboard  | Plant wellness score, live sensor cards, real-time chart, watering time, and 7-day stress trend |
+| `/calendar` | Calendar   | Daily PSI wellness history by date                                                              |
+| `/data`     | Data Table | Browse and filter all historical readings by date range                                         |
+| `/predict`  | Prediction | Predicted PSI trend for the next 1–12 hours                                                     |
 
 ## Environment Variables
 
@@ -186,15 +187,17 @@ DB_NAME=your_student_id
 
 ## Microcontroller
 
-The `microcontroller(thonny)/` folder contains the MicroPython script 
+The `microcontroller(thonny)/` folder contains the MicroPython script
 that runs directly on the **KidBright32** board using the Thonny IDE.
 
 ### What it does
+
 - Reads sensor data (soil moisture, temperature/humidity, light intensity)
   every 15 minutes
 - Publishes readings as JSON payload to the MQTT broker via Wi-Fi
 
 ### How to flash
+
 1. Open **Thonny IDE** and connect the KidBright32 board via USB
 2. Set the interpreter to **MicroPython (ESP32)**
 3. Open `microcontroller(thonny)/main.py`
@@ -202,6 +205,7 @@ that runs directly on the **KidBright32** board using the Thonny IDE.
 5. Run or save to device as `main.py`
 
 ### MQTT Payload format
+
 ```json
 {
   "soil": 45,
@@ -215,9 +219,10 @@ that runs directly on the **KidBright32** board using the Thonny IDE.
 
 ![alt text](image.png)
 
-If you want to use data from https://iot.cpe.ku.ac.th/pma/. 
+If you want to use data from https://iot.cpe.ku.ac.th/pma/.
 Use b6710545792 account
 
 ## SQL schema files used in this project:
-- `database/prediction_logs.sql`
-- `database/sensor_readings.sql`
+
+- [database/prediction_logs.sql](database/prediction_logs.sql)
+- [database/sensor_readings.sql](database/sensor_readings.sql)

@@ -42,9 +42,9 @@
   position: relative;
 
   margin: 25px;
-  background: var(--card-bg);        /* พื้นหลัง */
-  border: 1px solid var(--border);  /* กรอบ */
-  border-radius: 12px;              /* มุมโค้ง */
+  background: var(--card-bg);        /* background */
+  border: 1px solid var(--border);  /* border */
+  border-radius: 12px;              /* rounded corners */
   padding: 30px 15px;
 }
 
@@ -64,9 +64,9 @@
   justify-content: center;
 
   margin: 25px;
-  background: var(--card-bg);        /* พื้นหลัง */
-  border: 1px solid var(--border);  /* กรอบ */
-  border-radius: 12px;              /* มุมโค้ง */
+  background: var(--card-bg);        /* background */
+  border: 1px solid var(--border);  /* border */
+  border-radius: 12px;              /* rounded corners */
   padding: 30px 40px;
   height: 550px;
 }

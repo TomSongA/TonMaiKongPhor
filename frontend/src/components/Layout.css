@@ -69,7 +69,7 @@
 .sidebar-link {
   display: block;
   padding: 12px 28px;
-  border-radius: 12px;  /* แต่ละ tab โค้งมน */
+  border-radius: 12px;  /* rounded corners for each tab */
   color: var(--text-muted);
   text-decoration: none;
   font-size: 22px;

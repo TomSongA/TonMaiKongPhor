@@ -64,7 +64,7 @@ export function evaluateStress(s) {
   return reasons
 }
 
-/** PSI = Plant Status Index 0–100 (สูง = สมบูรณ์) */
+/** PSI = Plant Status Index 0–100 (higher = healthier) */
 export function computePsi(s) {
   const reasons = evaluateStress(s)
   const penalty = Math.min(85, reasons.length * 22)
@@ -110,7 +110,7 @@ export function generateDaySummary(dayTs) {
   const samples = []
   for (let h = 0; h < 24; h += 2) {
     const t = dayStart + h * 3600000
-    const seed = dayStart + h  // seed จาก date+hour = ค่าเดิมทุกครั้ง
+    const seed = dayStart + h  // seed from date+hour — same value every render
     samples.push(
       randomReading({
         soil: 48 + Math.sin(h / 4) * 8,

@@ -11,7 +11,7 @@ export default function CircleGauge({ label, value, max, color }) {
   return (
     <div className="circle-gauge">
       <svg width="400" height="400">
-        {/* พื้นหลัง */}
+        {/* background circle */}
         <circle
           cx="200"
           cy="200"

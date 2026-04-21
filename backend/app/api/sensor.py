@@ -14,7 +14,7 @@ LONGITUDE = 100.5018
 
 
 async def fetch_weather() -> dict:
-    """ดึง outdoor weather จาก Open-Meteo (ฟรี ไม่ต้อง API key)"""
+    """Fetch outdoor weather from Open-Meteo (free, no API key required)."""
     url = (
         f"https://api.open-meteo.com/v1/forecast"
         f"?latitude={LATITUDE}&longitude={LONGITUDE}"

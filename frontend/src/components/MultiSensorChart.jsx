@@ -11,7 +11,7 @@ import {
   Legend,
 } from 'recharts'
 
-const MAX_POINTS = 30  // จำนวนจุดที่แสดง (เลื่อนกราฟ)
+const MAX_POINTS = 30  // number of points shown (scrolling chart)
 
 function formatData(history) {
   return history.map((r) => ({
@@ -32,7 +32,7 @@ export default function RealtimeChart({ history }) {
   const midnightToday = new Date()
   midnightToday.setHours(0, 0, 0, 0)
 
-  // เอาเฉพาะข้อมูลล่าสุด -> ทำให้กราฟเลื่อน
+  // keep only today's data so the chart scrolls forward
   const recent = history.filter((r) => r.at >= midnightToday.getTime())
   const latest = history[history.length - 1]
   const chartRows = formatData(recent)
